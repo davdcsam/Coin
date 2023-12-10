@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 flet = "*"
 metatrader5 = "*"
+pandas = "*"
 
 [dev-packages]
 
