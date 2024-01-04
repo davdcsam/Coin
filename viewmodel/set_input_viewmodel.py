@@ -57,7 +57,7 @@ class SetInputViewModel(InfoWidgets):
             pass
 
     def change_bot_state(self, status: bool) -> None:
-        self.model.change_bot_state(status)
+        self.model.change_bot_state(status, self.get_inputs(self.view))
 
     def checker_orders_positions(self) -> bool:
         return self.model_connection.checker_positions(self.get_inputs(self.view))
