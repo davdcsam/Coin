@@ -1,5 +1,7 @@
 # Standard Libraries
 import pprint
+from time import sleep
+import time
 from typing import Any, Literal
 
 # Third Party Libraries
@@ -27,7 +29,7 @@ class SetInputView:
         # === Windows === #
 
         self.child_window: int | str = dpg.add_child_window(
-            parent=parent_object, width=300, height=550
+            parent=parent_object, width=300, height=560
         )
 
         # === Group Titles === #
@@ -163,7 +165,7 @@ class SetInputView:
 
         self.button_undeploy: int | str = dpg.add_button(
             label="Undeploy",
-            pos=(136, 494),
+            pos=(136, 525),
             callback=self.undeploy,
             show=False,
             parent=self.group_manager_bot,
@@ -278,9 +280,10 @@ class SetInputView:
 
     def checker(self, sender, app_data):
         if self.viewmodel.checker_orders_positions():
+            dpg.hide_item(self.button_checker)
+            # time.sleep(.5)
             dpg.show_item(self.button_deploy)
             dpg.hide_item(self.button_undeploy)
-            dpg.hide_item(self.button_checker)
             self.viewmodel.change_bot_state(False)
 
     def delay_time_connection(self, sender, app_data):

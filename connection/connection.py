@@ -1,6 +1,4 @@
 # Standard Libraries
-from concurrent.futures import thread
-import pprint
 import threading
 import time
 from datetime import datetime
@@ -15,7 +13,6 @@ from traitlets import HasTraits, observe, Any
 # Owner Modules
 from utils.logs import Logs
 from utils.switch_view import SwitchView
-from utils.manager_files import ManagerFiles
 
 
 class Connection(HasTraits):

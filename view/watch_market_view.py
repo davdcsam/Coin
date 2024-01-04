@@ -19,7 +19,7 @@ class WatchMarketView:
         # === Windows === #
 
         self.child_window: int | str = dpg.add_child_window(
-            parent=parent_object, no_scrollbar=True, width=360, height=550, pos=(312, 8)
+            parent=parent_object, no_scrollbar=True, width=360, height=560, pos=(312, 8)
         )
 
         # === Group Titles === #

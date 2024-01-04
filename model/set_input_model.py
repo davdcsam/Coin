@@ -49,13 +49,13 @@ class SetInputModel:
         )
 
     def change_bot_state(self, status) -> None:
-        if status:
+        if status and not self.instance_trade.bot_status:
             self.instance_trade.bot_status = True
-            self.instance_logs.log("Bot was Undeployed", "t")
-        else:
-            self.instance_trade.bot_status = False
             self.instance_logs.log("Bot was Deployed", "t")
             self.instance_logs.log(f"Deplay Time at {self.instance_trade.delay_time}")
+        elif not status and self.instance_trade.bot_status:
+            self.instance_trade.bot_status = False
+            self.instance_logs.log("Bot was Undeployed", "t")
 
     def checker_orders_positions(self, inputs: dict) -> None:
         self.instance_trade.checker_positions(inputs)
