@@ -223,6 +223,8 @@ class Connection(HasTraits):
             self.running: bool = False
             self.delay_time = 0.5
             self.bot_status: bool = False
+            self.init_flag = False
+            self.deinit_flag = False
             self.order_types_dict: dict[str, int] = {
                 "Buy": mt5.ORDER_TYPE_BUY,
                 "Sell": mt5.ORDER_TYPE_SELL,
@@ -416,29 +418,28 @@ class Connection(HasTraits):
         # Call Main Loop
 
         # Init
-        self._update_data()
-
         self.instance_switch_view.switch("loby")
 
         print("Connected to {} Terminal".format(self.terminal_info["name"]))
-
-        if self.bot_status:
-            self.Init()
-        time.sleep(int(self.delay_time))
 
         # Any
         while self.running:
             self._update_data()
 
+            if self.init_flag:
+                self.Init()
+                self.init_flag = False
+
             if self.bot_status:
                 self.Any()
-            time.sleep(int(self.delay_time))
+
+            if self.deinit_flag:
+                self.DeInit()
+                self.deinit_flag = False
+
+            time.sleep(self.delay_time)
 
         # DeInit
-        self._update_data()
-
-        if self.bot_status:
-            self.DeInit()
         mt5.shutdown()
 
         # Restore Value
