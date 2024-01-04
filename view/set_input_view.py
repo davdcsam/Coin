@@ -260,6 +260,9 @@ class SetInputView:
                             ),
                         )
                     else:
+                        if change["new"] in dpg.get_item_configuration(atr)["format"]:
+                            continue
+
                         dpg.configure_item(
                             atr,
                             format="{} {}".format(
