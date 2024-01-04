@@ -225,6 +225,7 @@ class Connection(HasTraits):
             self.bot_status: bool = False
             self.init_flag = False
             self.deinit_flag = False
+            self.inputs: dict = {}
             self.order_types_dict: dict[str, int] = {
                 "Buy": mt5.ORDER_TYPE_BUY,
                 "Sell": mt5.ORDER_TYPE_SELL,
@@ -447,7 +448,11 @@ class Connection(HasTraits):
 
     def _restore_atributes(self):
         # Restore atributes to initial values
+        self.delay_time = 0.5
         self.running = False
+        self.bot_status = False
+        self.init_flag = False
+        self.deinit_flag = False
 
         if self.thread:
             self.thread = None
@@ -468,6 +473,7 @@ class Connection(HasTraits):
         for dictatr in (
             self.orders_total,
             self.positions_total,
+            self.inputs,
         ):
             if dictatr:
                 dictatr.clear()
@@ -534,8 +540,8 @@ class Connection(HasTraits):
             self.stop()
             return
         self.symbol_info_tick: dict = symbol_info_tick_temp._asdict()
-        for k, v in self.symbol_info.items():
-            self.__setattr__(f"symbol_info_tick{k}", v)
+        for k, v in self.symbol_info_tick.items():
+            self.__setattr__(f"symbol_info_tick_{k}", v)
 
         # ____ ___  ____ ____ ____     _  _ ___  ___  ____ ___ ____
         # |  | |  \ |___ |__/ [__      |  | |__] |  \ |__|  |  |___
@@ -586,7 +592,7 @@ class Connection(HasTraits):
         Sets up the trading parameters and verifies the terminal information.
         """
         time_broker: str = datetime.fromtimestamp(
-            self.symbol_info_tick["time_msc"] / 1000.0
+            self.symbol_info_tick_msc / 1000.0
         ).strftime("%H:%M:%S.%f")[:-3]
 
         print("InitIteration {}".format(time_broker))
@@ -598,7 +604,7 @@ class Connection(HasTraits):
         can be placed based onthe section time.
         """
         time_broker: str = datetime.fromtimestamp(
-            self.symbol_info_tick["time_msc"] / 1000.0
+            self.symbol_info_tick_msc / 1000.0
         ).strftime("%H:%M:%S.%f")[:-3]
 
         print("AnyInteration: {}".format(time_broker))
@@ -608,7 +614,7 @@ class Connection(HasTraits):
         This method is called when the trading thread is deinitialized.
         """
         time_broker: str = datetime.fromtimestamp(
-            self.symbol_info_tick["time_msc"] / 1000.0
+            self.symbol_info_tick_msc / 1000.0
         ).strftime("%H:%M:%S.%f")[:-3]
 
         print("DeinitIteration {}".format(time_broker))
