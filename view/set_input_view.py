@@ -54,6 +54,13 @@ class SetInputView:
             default_value="Data Trade", parent=self.group_data_trade
         )
 
+        self.input_order_type: int | str = dpg.add_combo(
+            label="Order Type",
+            items=list(self.viewmodel.model_connection.order_types_dict.keys()),
+            default_value=list(self.viewmodel.model_connection.order_types_dict.keys())[0],
+            parent=self.group_data_trade,
+        )
+
         self.input_lot_size: int | str = dpg.add_input_float(
             label="Lot Size",
             callback=self.show_checker,

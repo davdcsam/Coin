@@ -225,6 +225,10 @@ class Connection(HasTraits):
             self.running: bool = False
             self.delay_time = 0.5
             self.bot_status: bool = False
+            self.order_types_dict: dict[str, int] = {
+                "Buy": mt5.ORDER_TYPE_BUY,
+                "Sell": mt5.ORDER_TYPE_SELL,
+            }
             self.df_orders_total = pd.DataFrame(
                 columns=[
                     "ticket",
