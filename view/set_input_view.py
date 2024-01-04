@@ -55,25 +55,32 @@ class SetInputView:
         )
 
         self.input_lot_size: int | str = dpg.add_input_float(
-            label="Lot Size", parent=self.group_data_trade
+            label="Lot Size",
+            callback=self.show_checker,
+            parent=self.group_data_trade,
         )
 
         self.input_take_profit: int | str = dpg.add_input_float(
             label="Take Profit",
+            callback=self.show_checker,
             parent=self.group_data_trade,
         )
 
         self.input_stop_loss: int | str = dpg.add_input_float(
-            label="Stop Loss", parent=self.group_data_trade
+            label="Stop Loss",
+            callback=self.show_checker,
+            parent=self.group_data_trade,
         )
 
         self.input_magic_number: int | str = dpg.add_input_int(
             label="Magic Number",
+            callback=self.show_checker,
             parent=self.group_data_trade,
         )
 
         self.input_deviation_trade: int | str = dpg.add_input_int(
             label="Deviation",
+            callback=self.show_checker,
             parent=self.group_data_trade,
         )
 
@@ -84,16 +91,21 @@ class SetInputView:
         )
 
         self.title_section_time: int | str = dpg.add_text(
-            default_value="Section Time", parent=self.group_section_time
+            default_value="Section Time",
+            parent=self.group_section_time,
         )
 
         self.input_time_start: int | str = dpg.add_time_picker(
-            label="Start Time", hour24=True, parent=self.group_section_time
+            label="Start Time",
+            callback=self.show_checker,
+            hour24=True,
+            parent=self.group_section_time,
         )
 
         self.input_time_end: int | str = dpg.add_time_picker(
             label="End Time",
             hour24=True,
+            callback=self.show_checker,
             parent=self.group_section_time,
         )
 
@@ -171,6 +183,10 @@ class SetInputView:
     def update_item(self, item, value):
         if dpg.does_item_exist(item):
             dpg.set_value(item, value)
+
+    def show_checker(self, sender, app_data):
+        dpg.hide_item(self.button_deploy)
+        dpg.show_item(self.button_checker)
 
     def load_inputs(self, sender, app_data):
         inputs: dict[str, Any] | Literal[False] = self.viewmodel.load_inputs()
@@ -258,6 +274,7 @@ class SetInputView:
             dpg.show_item(self.button_deploy)
             dpg.hide_item(self.button_undeploy)
             dpg.hide_item(self.button_checker)
+            self.viewmodel.change_bot_state(False)
 
     def delay_time_connection(self, sender, app_data):
         self.viewmodel.change_delay_time(app_data)
