@@ -7,7 +7,7 @@ from typing import Any, Literal
 # Owner Modules
 from utils.logs import Logs
 from utils.manager_files import ManagerFiles
-from model.trade_model import TradeModel
+from model.trade.trade_model import TradeModel
 
 
 class SetInputModel:

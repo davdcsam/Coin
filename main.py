@@ -10,7 +10,7 @@ from utils.logs import Logs
 from utils.switch_view import SwitchView
 from utils.themes import Themes
 
-from model.trade_model import TradeModel
+from model.trade.trade_model import TradeModel
 
 from model.sign_model import SignModel
 from viewmodel.sign_viewmodel import SignViewModel

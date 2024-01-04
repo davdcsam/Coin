@@ -8,7 +8,7 @@ import dearpygui.dearpygui as dpg
 
 
 # Owner Modules
-from model.trade_model import TradeModel
+from model.trade.trade_model import TradeModel
 
 from utils.manager_files import ManagerFiles
 from utils.logs import Logs
