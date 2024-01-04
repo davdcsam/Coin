@@ -1,5 +1,6 @@
 #  Standard Libraries
 import re
+import datetime
 
 
 class Formater:
@@ -48,11 +49,26 @@ class Formater:
         """
         return float(format_str % float_num)
 
+    @staticmethod
     def get_format_from_incorrect_format(format_str: str) -> str:
+        """
+        Gets a valid format from an incorrect format string.
+
+        Parameters:
+        format_str (str): an incorrect format string.
+
+        Returns:
+        str: The valid format found in the incorrect format string.
+
+        Example:
+        >>> get_format_from_incorrect_format("%d USD").
+        '%d'
+        """
         new_format: re.Match[str] | None = re.search(r"%.\w*", format_str)
         if new_format:
             return new_format.group()
 
+    @staticmethod
     def change_decimals_from_format_num(format_str: str, decimals: int) -> str:
         """
         Changes the number of decimal places in a format string.
@@ -71,3 +87,28 @@ class Formater:
         parts = format_str.split(".")
         format_changed = parts[0] + "." + str(decimals) + parts[1][1:]
         return format_changed
+
+    @staticmethod
+    def time_dpg_to_datetime(input_time: dict) -> datetime.datetime:
+        """
+        Converts a time in DPG format to datetime time.
+
+        Parameters:
+        input_time (dict): a dictionary containing time information in DPG format. The dictionary keys are "year", "month", "month_day", "hour", "min", "sec".
+
+        Returns:
+        int: The time in datetime format.
+
+        Example:
+        >>> time_dpg_to_datetime({"year": 123, "month": 11, "month_day": 30, "hour": 15, "min": 30, "sec": 45})
+        4120753945
+        """
+        dt = datetime.datetime(
+            input_time["year"] + 1900,
+            input_time["month"] + 1,
+            input_time["month_day"],
+            input_time["hour"],
+            input_time["min"],
+            input_time["sec"],
+        )
+        return dt
