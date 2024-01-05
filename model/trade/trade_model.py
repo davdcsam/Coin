@@ -114,7 +114,7 @@ class TradeModel(Connection):
         formated_inputs: dict[str, Any] = ManagerFiles.get_data_formated(inputs)
 
         start_time, end_time = self.instance_section_time.verify_existence_from_input(
-            formated_inputs
+            formated_inputs, self.symbol_info_tick_time
         )
 
         if start_time == end_time:
@@ -133,13 +133,15 @@ class TradeModel(Connection):
         Called when the trading thread is initialized.
         Sets up the trading parameters and verifies the terminal information.
         """
-        time_broker: str = datetime.utcfromtimestamp(
-            self.symbol_info_tick_time_msc / 1000.0
-        ).strftime("%H:%M:%S.%f")[:-3]
+        self.instance_section_time.Init(self.inputs, self.symbol_info_tick_time)
 
-        self.instance_section_time.Init(self.inputs)
-
-        print("InitIteration {}".format(time_broker))
+        print(
+            "InitIteration {}".format(
+                datetime.utcfromtimestamp(
+                    self.symbol_info_tick_time_msc / 1000.0
+                ).strftime("%H:%M:%S.%f")[:-3]
+            )
+        )
 
     def Any(self):
         """
@@ -147,22 +149,25 @@ class TradeModel(Connection):
         Checks the current time and verifies if a trade
         can be placed based onthe section time.
         """
-        time_broker: str = datetime.utcfromtimestamp(
-            self.symbol_info_tick_time_msc / 1000.0
-        ).strftime("%H:%M:%S.%f")[:-3]
+        self.instance_section_time.Any(self.symbol_info_tick_time)
 
-        self.instance_section_time.Any(
-            datetime.utcfromtimestamp(self.symbol_info_tick_time)
+        print(
+            "AnyInteration: {}".format(
+                datetime.utcfromtimestamp(
+                    self.symbol_info_tick_time_msc / 1000.0
+                ).strftime("%H:%M:%S.%f")[:-3]
+            )
         )
-
-        print("AnyInteration: {}".format(time_broker))
 
     def DeInit(self):
         """
         This method is called when the trading thread is deinitialized.
         """
-        time_broker: str = datetime.utcfromtimestamp(
-            self.symbol_info_tick_time_msc / 1000.0
-        ).strftime("%H:%M:%S.%f")[:-3]
 
-        print("DeinitIteration {}".format(time_broker))
+        print(
+            "DeinitIteration {}".format(
+                datetime.utcfromtimestamp(
+                    self.symbol_info_tick_time_msc / 1000.0
+                ).strftime("%H:%M:%S.%f")[:-3]
+            )
+        )
