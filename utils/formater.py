@@ -1,6 +1,6 @@
 #  Standard Libraries
 import re
-import datetime
+from datetime import datetime
 
 
 class Formater:
@@ -89,7 +89,7 @@ class Formater:
         return format_changed
 
     @staticmethod
-    def time_dpg_to_datetime(input_time: dict) -> datetime.datetime:
+    def time_dpg_to_datetime(input_time: dict) -> datetime:
         """
         Converts a time in DPG format to datetime time.
 
@@ -107,6 +107,34 @@ class Formater:
             input_time["year"] + 1900,
             input_time["month"] + 1,
             input_time["month_day"],
+            input_time["hour"],
+            input_time["min"],
+            input_time["sec"],
+        )
+        return dt
+
+    @staticmethod
+    def time_dpg_to_broker_datetime(input_time: dict, broker_time: int) -> datetime:
+        """
+        Converts a time in DPG format to a datetime time,
+        using the date from a provided datetime object.
+
+        Parameters:
+        input_time (dict): A dictionary containing time information in DPG format. The dictionary keys are "hour", "min", "sec".
+        broker_time (int): A Unix timestamp from which the date information is extracted.
+
+        Returns:
+        datetime: The time in datetime format, with the date information from the broker_time parameter.
+
+        Example:
+        >>> time_dpg_to_broker_datetime({"hour": 15, "min": 30, "sec": 45}, 1704423142)
+        datetime.datetime(2023, 11, 30, 15, 30, 45)
+        """
+        broker_time: datetime = datetime.utcfromtimestamp(broker_time)
+        dt = datetime(
+            broker_time.year,
+            broker_time.month,
+            broker_time.day,
             input_time["hour"],
             input_time["min"],
             input_time["sec"],
