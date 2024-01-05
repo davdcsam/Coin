@@ -9,8 +9,8 @@ import MetaTrader5 as mt5
 from connection.connection import Connection
 
 from model.trade.section_time import SectionTimeModule
+from model.trade.no_position import NoPositionModule
 
-from utils.formater import Formater
 from utils.manager_files import ManagerFiles
 
 
@@ -18,6 +18,7 @@ class TradeModel(Connection):
     def __init__(self) -> None:
         super().__init__()
         self.instance_section_time = SectionTimeModule()
+        self.instance_no_position = NoPositionModule()
 
     def _build_requests_for_check(
         self,
@@ -133,13 +134,19 @@ class TradeModel(Connection):
         Called when the trading thread is initialized.
         Sets up the trading parameters and verifies the terminal information.
         """
-        self.instance_section_time.Init(self.inputs, self.symbol_info_tick_time)
+
+        if self.instance_section_time.Init(
+            self.inputs, self.symbol_info_tick_time
+        ) and self.instance_no_position.Init(self.inputs, self.df_positions_total):
+            print("Trade")
 
         print(
-            "InitIteration {}".format(
+            "InitIteration:{} - Section Time {} - No Positions {}".format(
                 datetime.utcfromtimestamp(
                     self.symbol_info_tick_time_msc / 1000.0
-                ).strftime("%H:%M:%S.%f")[:-3]
+                ).strftime("%H:%M:%S.%f")[:-3],
+                self.instance_section_time.Any(self.symbol_info_tick_time),
+                self.instance_no_position.Any(self.inputs, self.df_positions_total),
             )
         )
 
@@ -149,13 +156,18 @@ class TradeModel(Connection):
         Checks the current time and verifies if a trade
         can be placed based onthe section time.
         """
-        self.instance_section_time.Any(self.symbol_info_tick_time)
+        if self.instance_section_time.Any(
+            self.symbol_info_tick_time
+        ) and self.instance_no_position.Any(self.inputs, self.df_positions_total):
+            print("Trade")
 
         print(
-            "AnyInteration: {}".format(
+            "AnyInteration: {} - Section Time {} - No Positions {}".format(
                 datetime.utcfromtimestamp(
                     self.symbol_info_tick_time_msc / 1000.0
-                ).strftime("%H:%M:%S.%f")[:-3]
+                ).strftime("%H:%M:%S.%f")[:-3],
+                self.instance_section_time.Any(self.symbol_info_tick_time),
+                self.instance_no_position.Any(self.inputs, self.df_positions_total),
             )
         )
 

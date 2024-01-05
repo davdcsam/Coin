@@ -77,7 +77,7 @@ class SectionTimeModule:
             self.time_start: datetime = self.time_end
             self.time_end: datetime = time_temp
 
-    def Any(self, broker_time: int) -> None:
+    def Any(self, broker_time: int) -> bool:
         """
         Checks if the given time falls within the start and end times of the section.
         Updates the section_time_state accordingly.
@@ -86,8 +86,7 @@ class SectionTimeModule:
         # Checking if the given time is after the start time
         if broker_time > self.time_start and broker_time < self.time_end:
             self.state = True
-            print(self.state, self.time_start, broker_time, self.time_end)
         else:
             self.state = False
-            print(self.state, self.time_start, broker_time, self.time_end)
-        # pass
+
+        return self.state
