@@ -133,7 +133,7 @@ class TradeModel(Connection):
         Called when the trading thread is initialized.
         Sets up the trading parameters and verifies the terminal information.
         """
-        time_broker: str = datetime.fromtimestamp(
+        time_broker: str = datetime.utcfromtimestamp(
             self.symbol_info_tick_time_msc / 1000.0
         ).strftime("%H:%M:%S.%f")[:-3]
 
@@ -147,9 +147,13 @@ class TradeModel(Connection):
         Checks the current time and verifies if a trade
         can be placed based onthe section time.
         """
-        time_broker: str = datetime.fromtimestamp(
+        time_broker: str = datetime.utcfromtimestamp(
             self.symbol_info_tick_time_msc / 1000.0
         ).strftime("%H:%M:%S.%f")[:-3]
+
+        self.instance_section_time.Any(
+            datetime.utcfromtimestamp(self.symbol_info_tick_time)
+        )
 
         print("AnyInteration: {}".format(time_broker))
 
@@ -157,7 +161,7 @@ class TradeModel(Connection):
         """
         This method is called when the trading thread is deinitialized.
         """
-        time_broker: str = datetime.fromtimestamp(
+        time_broker: str = datetime.utcfromtimestamp(
             self.symbol_info_tick_time_msc / 1000.0
         ).strftime("%H:%M:%S.%f")[:-3]
 

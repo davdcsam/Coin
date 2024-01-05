@@ -27,6 +27,24 @@ class SectionTimeModule:
 
     @staticmethod
     def verify_existence_from_input(inputs: dict) -> tuple[datetime, datetime]:
+        """
+        This static method verifies the existence of
+        'input_time_start' and 'input_time_end'
+        keys in the input dictionary.
+
+        It then converts the values of these keys from
+        Dear PyGui time format to Python datetime objects.
+
+        Args:
+            inputs (dict): A dictionary that should contain the keys 'input_time_start' and 'input_time_end'.
+                           The values corresponding to these keys should be in Dear PyGui time format.
+
+        Returns:
+            tuple[datetime, datetime]: A tuple containing two datetime objects corresponding to 'input_time_start' and 'input_time_end'.
+
+        Raises:
+            Exception: If either 'input_time_start' or 'input_time_end' do not exist in the input dictionary, an exception is raised.
+        """
         if all(key in inputs for key in ["input_time_start", "input_time_end"]):
             time_start: datetime = Formater.time_dpg_to_datetime(
                 inputs["input_time_start"]
@@ -40,13 +58,12 @@ class SectionTimeModule:
                 """
             )
 
-    def Init(self, inputs: dict) -> bool:
+    def Init(self, inputs: dict):
         """
         Initializes the start and end times of the section from the input dictionary.
         If the end time is earlier than the start time, they are swapped.
         """
         # Extracting the start and end times from the input dictionary
-
         self.time_start, self.time_end = self.verify_existence_from_input(inputs)
 
         # Swapping the start and end times if the end time is earlier
@@ -55,18 +72,15 @@ class SectionTimeModule:
             self.time_start: datetime = self.time_end
             self.time_end: datetime = time_temp
 
-        print(self.time_start)
-        print(self.time_end)
-        return True
-
     def Any(self, time_broker: datetime) -> None:
         """
         Checks if the given time falls within the start and end times of the section.
         Updates the section_time_state accordingly.
         """
-        print(time_broker)
-        # # Checking if the given time is after the start time
-        # if time_broker > self.time_start and time_broker < self.time_end:
-        #     self.state = True
-        # else:
-        #     self.state = False
+        # Checking if the given time is after the start time
+        if time_broker > self.time_start and time_broker < self.time_end:
+            self.state = True
+            print(self.state, self.time_start, time_broker, self.time_end)
+        else:
+            self.state = False
+            print(self.state, self.time_start, time_broker, self.time_end)
