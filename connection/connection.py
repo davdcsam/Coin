@@ -226,7 +226,7 @@ class Connection(HasTraits):
             self.bot_status: bool = False
             self.init_flag = False
             self.deinit_flag = False
-            self.inputs: dict = {}
+            self.formated_inputs: dict = {}
             self.order_types_dict: dict[str, int] = {
                 "Buy": mt5.ORDER_TYPE_BUY,
                 "Sell": mt5.ORDER_TYPE_SELL,
@@ -474,7 +474,7 @@ class Connection(HasTraits):
         for dictatr in (
             self.orders_total,
             self.positions_total,
-            self.inputs,
+            self.formated_inputs,
         ):
             if dictatr:
                 dictatr.clear()

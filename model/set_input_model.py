@@ -48,7 +48,7 @@ class SetInputModel:
 
     def change_bot_state(self, status: bool, inputs: dict) -> None:
         if status and not self.instance_trade.bot_status:
-            self.instance_trade.inputs = self.instance_manager_files.get_data_formated(
+            self.instance_trade.formated_inputs = self.instance_manager_files.get_data_formated(
                 inputs
             )
 
