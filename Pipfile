@@ -4,9 +4,13 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-flet = "*"
 metatrader5 = "*"
+dearpygui = "*"
 pandas = "*"
+pyinstaller = "*"
+requests = "*"
+traitlets = "*"
+pillow = "*"
 
 [dev-packages]
 

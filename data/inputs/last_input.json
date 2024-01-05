@@ -1,0 +1,30 @@
+{
+    "input_lot_size": 4.1,
+    "input_take_profit": 100.0,
+    "input_stop_loss": 100.0,
+    "input_magic_number": 0,
+    "input_deviation_trade": 10,
+    "input_time_start": {
+        "sec": 6,
+        "min": 0,
+        "hour": 15,
+        "month_day": 1,
+        "month": 0,
+        "year": 70,
+        "week_day": 4,
+        "year_day": 0,
+        "daylight_savings": 0
+    },
+    "input_time_end": {
+        "sec": 0,
+        "min": 0,
+        "hour": 19,
+        "month_day": 1,
+        "month": 0,
+        "year": 70,
+        "week_day": 4,
+        "year_day": 0,
+        "daylight_savings": 0
+    },
+    "input_delay_time_connection": 0.5
+}
