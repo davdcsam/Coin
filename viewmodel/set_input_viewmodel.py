@@ -59,8 +59,8 @@ class SetInputViewModel(InfoWidgets):
     def change_bot_state(self, status: bool) -> None:
         self.model.change_bot_state(status, self.get_inputs(self.view))
 
-    def checker_orders_positions(self) -> bool:
-        return self.model_connection.checker_positions(self.get_inputs(self.view))
+    def checker(self) -> bool:
+        return self.model.checker(self.get_inputs(self.view))
 
     def change_delay_time(self, new_delay: float) -> None:
         self.model.change_delay_time(new_delay)

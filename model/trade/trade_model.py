@@ -110,6 +110,24 @@ class TradeModel(Connection):
 
         return True
 
+    def checker_inputs(self, inputs: dict) -> bool:
+        formated_inputs: dict[str, Any] = ManagerFiles.get_data_formated(inputs)
+
+        start_time, end_time = self.instance_section_time.verify_existence_from_input(
+            formated_inputs
+        )
+
+        if start_time == end_time:
+            self.instance_logs.notification(
+                "Start Time {} cannot equals to End Time {}".format(
+                    start_time.strftime("%H:%M:%S"), end_time.strftime("%H:%M:%S")
+                ),
+                "t",
+            )
+            return False
+
+        return True
+
     def Init(self):
         """
         Called when the trading thread is initialized.

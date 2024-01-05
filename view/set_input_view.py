@@ -282,9 +282,8 @@ class SetInputView:
         self.viewmodel.change_bot_state(False)
 
     def checker(self, sender, app_data):
-        if self.viewmodel.checker_orders_positions():
+        if self.viewmodel.checker():
             dpg.hide_item(self.button_checker)
-            # time.sleep(.5)
             dpg.show_item(self.button_deploy)
             dpg.hide_item(self.button_undeploy)
             self.viewmodel.change_bot_state(False)

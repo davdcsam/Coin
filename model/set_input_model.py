@@ -67,8 +67,11 @@ class SetInputModel:
 
             self.instance_logs.log("Bot was Undeployed", "t")
 
-    def checker_orders_positions(self, inputs: dict) -> None:
-        self.instance_trade.checker_positions(inputs)
+    def checker(self, inputs: dict) -> Literal[True] | None:
+        if self.instance_trade.checker_inputs(
+            inputs
+        ) and self.instance_trade.checker_positions(inputs):
+            return True
 
     def change_delay_time(self, deplay_time: float) -> None:
         self.instance_trade.delay_time = deplay_time
