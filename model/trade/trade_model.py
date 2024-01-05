@@ -1,15 +1,24 @@
 # Standard Libraries
 from datetime import datetime
+from typing import Any
 
 # Third Party Libraries
 import MetaTrader5 as mt5
 
 # Owner Modules
 from connection.connection import Connection
+
+from model.trade.section_time import SectionTimeModule
+
+from utils.formater import Formater
 from utils.manager_files import ManagerFiles
 
 
 class TradeModel(Connection):
+    def __init__(self) -> None:
+        super().__init__()
+        self.instance_section_time = SectionTimeModule()
+
     def _build_requests_for_check(
         self,
         volume: float,
@@ -107,8 +116,10 @@ class TradeModel(Connection):
         Sets up the trading parameters and verifies the terminal information.
         """
         time_broker: str = datetime.fromtimestamp(
-            self.symbol_info_tick["time_msc"] / 1000.0
+            self.symbol_info_tick_time_msc / 1000.0
         ).strftime("%H:%M:%S.%f")[:-3]
+
+        self.instance_section_time.Init(self.inputs)
 
         print("InitIteration {}".format(time_broker))
 
@@ -119,7 +130,7 @@ class TradeModel(Connection):
         can be placed based onthe section time.
         """
         time_broker: str = datetime.fromtimestamp(
-            self.symbol_info_tick["time_msc"] / 1000.0
+            self.symbol_info_tick_time_msc / 1000.0
         ).strftime("%H:%M:%S.%f")[:-3]
 
         print("AnyInteration: {}".format(time_broker))
@@ -129,7 +140,7 @@ class TradeModel(Connection):
         This method is called when the trading thread is deinitialized.
         """
         time_broker: str = datetime.fromtimestamp(
-            self.symbol_info_tick["time_msc"] / 1000.0
+            self.symbol_info_tick_time_msc / 1000.0
         ).strftime("%H:%M:%S.%f")[:-3]
 
         print("DeinitIteration {}".format(time_broker))
