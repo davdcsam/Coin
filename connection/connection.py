@@ -1,4 +1,5 @@
 # Standard Libraries
+import pprint
 import threading
 import time
 from datetime import datetime
@@ -554,7 +555,9 @@ class Connection(HasTraits):
                 columns=orders_total_temp[0]._asdict().keys(),
             )
         else:
-            self.df_orders_total.iloc[0:0]
+            self.df_orders_total: pd.DataFrame = self.df_orders_total.drop(
+                self.df_orders_total.index
+            )
         self.orders_total: dict[Hashable, Any] = self.df_orders_total.to_dict()
 
         # ___  ____ ____ _ ___ _ ____ _  _ ____    _  _ ___  ___  ____ ___ ____
@@ -568,7 +571,9 @@ class Connection(HasTraits):
                 columns=positions_total_temp[0]._asdict().keys(),
             )
         else:
-            self.df_positions_total.iloc[0:0]
+            self.df_positions_total: pd.DataFrame = self.df_positions_total.drop(
+                self.df_positions_total.index
+            )
         self.positions_total: dict[Hashable, Any] = self.df_positions_total.to_dict()
 
     def stop(self):
