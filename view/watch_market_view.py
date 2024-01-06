@@ -295,6 +295,9 @@ class WatchMarketView:
         self.instance_switch_view.switch("sign_out")
 
     def update_items(self, change):
+        if change["new"] is None:
+            return
+
         items: list[str] = [
             "login_info_input_alias_name",
             "login_info_input_user",
@@ -316,7 +319,6 @@ class WatchMarketView:
         for item in items:
             if (
                 item in change["name"]
-                and change["new"] is not None
                 and hasattr(self, change["name"])
                 and dpg.does_item_exist(self.__getattribute__(change["name"]))
             ):
@@ -357,6 +359,8 @@ class WatchMarketView:
                     )
 
     def update_tables(self, change):
+        if change["new"] is None:
+            return
         tables: dict[str, int | str] = {
             "terminal_info": self.terminal_info_table,
             "account_info": self.account_info_table,
