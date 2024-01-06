@@ -1,4 +1,5 @@
 # Standard Libraries
+import datetime
 from typing import LiteralString
 
 # Third Party Libraries
@@ -14,7 +15,12 @@ class WatchMarketView:
         # === Utils === #
 
         self.instance_fonts = Fonts()
+
         self.instance_switch_view: SwitchView = SwitchView.getInstance()
+
+        # ··· Atr ··· #
+
+        self.viewmodel = viewmodel
 
         # === Windows === #
 
@@ -128,14 +134,7 @@ class WatchMarketView:
 
         self.symbol_info_time: int | str = dpg.add_text(
             default_value="",
-            label="Time Broker",
-            show_label=True,
-            parent=self.group_symbol_info,
-        )
-
-        self.symbol_info_trade_mode: int | str = dpg.add_text(
-            default_value="",
-            label="Trade Access",
+            label="Symbol Time",
             show_label=True,
             parent=self.group_symbol_info,
         )
@@ -290,7 +289,7 @@ class WatchMarketView:
             label="Value",
         )
 
-        viewmodel.bind(self)
+        self.viewmodel.bind(self)
 
     def _switch_status(self, sender, app_data):
         self.instance_switch_view.switch("sign_out")
@@ -307,7 +306,6 @@ class WatchMarketView:
             "symbol_info_name",
             "symbol_info_description",
             "symbol_info_time",
-            "symbol_info_trade_mode",
             "symbol_info_ask",
             "symbol_info_bid",
             "symbol_info_volume_min",
@@ -321,6 +319,31 @@ class WatchMarketView:
                 and hasattr(self, change["name"])
                 and dpg.does_item_exist(self.__getattribute__(change["name"]))
             ):
+                if item in [
+                    "account_info_balance",
+                    "account_info_equity",
+                    "account_info_profit",
+                ]:
+                    formated_value: str = "{} {:,.2f}".format(
+                        self.viewmodel.model_connection.account_info["currency"],
+                        float(change["new"]),
+                    )
+                    dpg.set_value(
+                        self.__getattribute__(change["name"]),
+                        formated_value,
+                    )
+                    continue
+
+                if item in "symbol_info_time":
+                    formated_value: str = datetime.datetime.utcfromtimestamp(
+                        change["new"]
+                    )
+                    dpg.set_value(
+                        self.__getattribute__(change["name"]),
+                        formated_value,
+                    )
+                    continue
+
                 if isinstance(change["new"], dict):
                     dpg.set_value(
                         self.__getattribute__(change["name"]),

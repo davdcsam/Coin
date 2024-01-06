@@ -23,7 +23,6 @@ class WatchMarketViewModel:
             "symbol_info_name",
             "symbol_info_description",
             "symbol_info_time",
-            "symbol_info_trade_mode",
             "symbol_info_ask",
             "symbol_info_bid",
             "symbol_info_volume_min",
