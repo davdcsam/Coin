@@ -316,6 +316,7 @@ class WatchMarketView:
         for item in items:
             if (
                 item in change["name"]
+                and change["new"] is not None
                 and hasattr(self, change["name"])
                 and dpg.does_item_exist(self.__getattribute__(change["name"]))
             ):
