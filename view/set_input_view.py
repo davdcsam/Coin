@@ -46,6 +46,19 @@ class SetInputView:
             [self.title_coin], "opensans_semibold_title_60"
         )
 
+        # === Group Status Connection === #
+
+        self.group_status_connection: int | str = dpg.add_group(
+            parent=self.child_window,
+            pos=(190, 35),
+        )
+
+        self.sign_out_button: int | str = dpg.add_button(
+            label="Sign Out",
+            callback=lambda: self.instance_switch_view.switch("sign_out"),
+            parent=self.group_status_connection,
+        )
+
         # === Group Data Trade === #
 
         self.group_data_trade: int | str = dpg.add_group(

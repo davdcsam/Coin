@@ -38,23 +38,16 @@ class WatchMarketView:
 
         self.instance_fonts.set_font_item(self.title)
 
-        # === Group Status Connection === #
+        # === Group Full Info === #
 
-        self.group_status_connection: int | str = dpg.add_group(
-            parent=self.child_window
+        self.group_full_info: int | str = dpg.add_group(
+            parent=self.child_window,
         )
 
-        self.status_label: int | str = dpg.add_text(
-            label="Status",
-            show_label=True,
-            parent=self.group_status_connection,
-        )
-
-        self.status_button: int | str = dpg.add_button(
-            label="Online",
-            callback=self._switch_status,
-            pos=(10, 60),
-            parent=self.group_status_connection,
+        self.watch_market_full: int | str = dpg.add_button(
+            label="More Information",
+            callback=lambda: dpg.show_item(self.full_view_window),
+            parent=self.group_full_info,
         )
 
         # === Group Login Info === #
@@ -151,46 +144,6 @@ class WatchMarketView:
             label="Bid",
             show_label=True,
             parent=self.group_symbol_info,
-        )
-
-        self.symbol_info_volume_min: int | str = dpg.add_text(
-            default_value="",
-            label="Volumen Min",
-            show_label=True,
-            parent=self.group_symbol_info,
-        )
-
-        self.symbol_info_volume_max: int | str = dpg.add_text(
-            default_value="",
-            label="Volumen Max",
-            show_label=True,
-            parent=self.group_symbol_info,
-        )
-
-        self.symbol_info_volume_step: int | str = dpg.add_text(
-            default_value="",
-            label="Volumen Step",
-            show_label=True,
-            parent=self.group_symbol_info,
-        )
-
-        self.symbol_info_volume_limit: int | str = dpg.add_text(
-            default_value="",
-            label="Volume Limit",
-            show_label=True,
-            parent=self.group_symbol_info,
-        )
-
-        # === Group Full Info === #
-
-        self.group_full_info: int | str = dpg.add_group(
-            parent=self.child_window, pos=(225, 20)
-        )
-
-        self.watch_market_full: int | str = dpg.add_button(
-            label="Full View",
-            callback=lambda: dpg.show_item(self.full_view_window),
-            parent=self.group_full_info,
         )
 
         # === Group Full View === #
@@ -291,9 +244,6 @@ class WatchMarketView:
 
         self.viewmodel.bind(self)
 
-    def _switch_status(self, sender, app_data):
-        self.instance_switch_view.switch("sign_out")
-
     def update_items(self, change):
         if change["new"] is None:
             return
@@ -311,10 +261,6 @@ class WatchMarketView:
             "symbol_info_time",
             "symbol_info_ask",
             "symbol_info_bid",
-            "symbol_info_volume_min",
-            "symbol_info_volume_max",
-            "symbol_info_volume_step",
-            "symbol_info_volume_limit",
         ]
         for item in items:
             if (
