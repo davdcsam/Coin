@@ -205,25 +205,32 @@ class SignView:
     def sign_in_connect(self, sender, app_data):
         if self.viewmodel.open_connection():
             self.instance_switch_view.switch("loby")
+            self.save_last_inputs()
 
     def load_inputs(self, sender, app_data):
         inputs: dict[str, Any] | Literal[False] = self.viewmodel.load_inputs()
-
-        if not inputs:
-            return
-
-        for k, v in inputs.items():
-            self.update_item(self.__getattribute__(k), v)
+        if self.set_inputs(inputs):
+            print("Load Inputs Successfully")
+        else:
+            print("Inputs File is Empty")
 
     def load_last_inputs(self):
         inputs: dict[str, Any] | Literal[False] = self.viewmodel.load_last_input()
+        if self.set_inputs(inputs):
+            print("Load Last Inputs Successfully")
+        else:
+            print("Inputs File is Empty")
+
+    def set_inputs(self, inputs: dict[str, Any]) -> bool:
         if not inputs:
-            return
+            return False
 
         for k, v in inputs.items():
-            self.update_item(self.__getattribute__(k), v)
+            if not hasattr(self, k):
+                continue
 
-        print("Load Last Inputs Successfully")
+            self.update_item(self.__getattribute__(k), v)
+        return True
 
     def save_inputs(self, sender, app_data):
         self.viewmodel.save_inputs()

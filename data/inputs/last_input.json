@@ -1,8 +1,8 @@
 {
+    "input_order_type": "Buy",
     "input_lot_size": 4.1,
     "input_take_profit": 100.0,
     "input_stop_loss": 100.0,
-    "input_magic_number": 0,
     "input_deviation_trade": 10,
     "input_time_start": {
         "sec": 6,

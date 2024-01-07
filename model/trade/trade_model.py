@@ -28,7 +28,6 @@ class TradeModel(Connection):
         take_profit: float,
         stop_loss: float,
         deviation_trade: int,
-        magic_number: int,
     ):
         """
         Prepare a trade request with the necessary parameters
@@ -46,7 +45,7 @@ class TradeModel(Connection):
                 "volume": volume,
                 "type": type_positions,
                 "deviation": deviation_trade,
-                "magic": magic_number,
+                "magic": 0,
                 "comment": "",
                 "type_time": self.symbol_info_order_gtc_mode,
                 "type_filling": filling_mode,
@@ -77,7 +76,6 @@ class TradeModel(Connection):
             formated_inputs["input_take_profit"],
             formated_inputs["input_stop_loss"],
             formated_inputs["input_deviation_trade"],
-            formated_inputs["input_magic_number"],
         ):
             order_check_result = mt5.order_check(request)
 
@@ -137,7 +135,6 @@ class TradeModel(Connection):
         take_profit: float,
         stop_loss: float,
         deviation_trade: int,
-        magic_number: int,
     ):
         trade_request = {
             "action": mt5.TRADE_ACTION_DEAL,
@@ -145,7 +142,7 @@ class TradeModel(Connection):
             "volume": volume,
             "type": type_positions,
             "deviation": deviation_trade,
-            "magic": magic_number,
+            "magic": 0,
             "comment": "",
             "type_time": self.symbol_info_order_gtc_mode,
             "type_filling": self.symbol_info_filling_mode_real,
@@ -179,7 +176,6 @@ class TradeModel(Connection):
                 self.formated_inputs["input_take_profit"],
                 self.formated_inputs["input_stop_loss"],
                 self.formated_inputs["input_deviation_trade"],
-                self.formated_inputs["input_magic_number"],
             )
 
             order_check_result = mt5.order_check(request)
