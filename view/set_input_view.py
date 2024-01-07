@@ -46,18 +46,15 @@ class SetInputView:
             [self.title_coin], "opensans_semibold_title_60"
         )
 
-        # === Group Status Connection === #
-
-        self.group_status_connection: int | str = dpg.add_group(
-            parent=self.child_window,
-            pos=(190, 35),
-        )
-
         self.sign_out_button: int | str = dpg.add_button(
-            label="Sign Out",
             callback=lambda: self.instance_switch_view.switch("sign_out"),
-            parent=self.group_status_connection,
+            width=100,
+            height=50,
+            pos=(8, 18),
+            parent=self.group_titles,
         )
+
+        self.instance_themes.invisible_button(self.sign_out_button)
 
         # === Group Data Trade === #
 
@@ -72,7 +69,9 @@ class SetInputView:
         self.input_order_type: int | str = dpg.add_combo(
             label="Order Type",
             items=list(self.viewmodel.model_connection.order_types_dict.keys()),
-            default_value=list(self.viewmodel.model_connection.order_types_dict.keys())[0],
+            default_value=list(self.viewmodel.model_connection.order_types_dict.keys())[
+                0
+            ],
             parent=self.group_data_trade,
         )
 
