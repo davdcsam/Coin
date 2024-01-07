@@ -59,9 +59,7 @@ class Themes(ColorTheme):
     def dark_window(self, window: int | str) -> None:
         local_theme: int | str = dpg.add_theme()
 
-        component: int | str = dpg.add_theme_component(
-            dpg.mvAll, parent=local_theme
-        )
+        component: int | str = dpg.add_theme_component(dpg.mvAll, parent=local_theme)
 
         dpg.add_theme_color(
             dpg.mvThemeCol_WindowBg,
@@ -74,93 +72,59 @@ class Themes(ColorTheme):
     def invisible_button(self, button: int | str) -> None:
         local_theme: int | str = dpg.add_theme()
 
-        component: int | str = dpg.add_theme_component(
-            dpg.mvAll, parent=local_theme
-        )
+        component: int | str = dpg.add_theme_component(dpg.mvAll, parent=local_theme)
+
+        dpg.add_theme_color(dpg.mvThemeCol_Button, [0, 0, 0, 0], parent=component)
+
+        dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, [0, 0, 0, 30], parent=component)
+
+        dpg.add_theme_color(dpg.mvThemeCol_ButtonActive, [255, 255, 255, 30], parent=component)
+
+        dpg.bind_item_theme(button, local_theme)
 
     def _set_global_style(self, theme_parent: int | str):
-        component: int | str = dpg.add_theme_component(
-            dpg.mvAll, parent=theme_parent
-        )
+        component: int | str = dpg.add_theme_component(dpg.mvAll, parent=theme_parent)
 
         # Main
-        dpg.add_theme_style(
-            dpg.mvStyleVar_WindowPadding, 8, 8, parent=component
-        )
+        dpg.add_theme_style(dpg.mvStyleVar_WindowPadding, 8, 8, parent=component)
 
-        dpg.add_theme_style(
-            dpg.mvStyleVar_FramePadding, 4, 3, parent=component
-        )
+        dpg.add_theme_style(dpg.mvStyleVar_FramePadding, 4, 3, parent=component)
 
-        dpg.add_theme_style(
-            dpg.mvStyleVar_CellPadding, 0, 0, parent=component
-        )
+        dpg.add_theme_style(dpg.mvStyleVar_CellPadding, 0, 0, parent=component)
 
-        dpg.add_theme_style(
-            dpg.mvStyleVar_ItemSpacing, 0, 5, parent=component
-        )
+        dpg.add_theme_style(dpg.mvStyleVar_ItemSpacing, 0, 5, parent=component)
 
-        dpg.add_theme_style(
-            dpg.mvStyleVar_ItemInnerSpacing, 4, 4, parent=component
-        )
+        dpg.add_theme_style(dpg.mvStyleVar_ItemInnerSpacing, 4, 4, parent=component)
 
-        dpg.add_theme_style(
-            dpg.mvStyleVar_IndentSpacing, 21, parent=component
-        )
+        dpg.add_theme_style(dpg.mvStyleVar_IndentSpacing, 21, parent=component)
 
-        dpg.add_theme_style(
-            dpg.mvStyleVar_ScrollbarSize, 14, parent=component
-        )
+        dpg.add_theme_style(dpg.mvStyleVar_ScrollbarSize, 14, parent=component)
 
-        dpg.add_theme_style(
-            dpg.mvStyleVar_GrabMinSize, 2, parent=component
-        )
+        dpg.add_theme_style(dpg.mvStyleVar_GrabMinSize, 2, parent=component)
 
         # Borders
-        dpg.add_theme_style(
-            dpg.mvStyleVar_WindowBorderSize, 1, parent=component
-        )
+        dpg.add_theme_style(dpg.mvStyleVar_WindowBorderSize, 1, parent=component)
 
-        dpg.add_theme_style(
-            dpg.mvStyleVar_ChildBorderSize, 1, parent=component
-        )
+        dpg.add_theme_style(dpg.mvStyleVar_ChildBorderSize, 1, parent=component)
 
-        dpg.add_theme_style(
-            dpg.mvStyleVar_PopupBorderSize, 1, parent=component
-        )
+        dpg.add_theme_style(dpg.mvStyleVar_PopupBorderSize, 1, parent=component)
 
-        dpg.add_theme_style(
-            dpg.mvStyleVar_FrameBorderSize, 0, parent=component
-        )
+        dpg.add_theme_style(dpg.mvStyleVar_FrameBorderSize, 0, parent=component)
 
         # Rounding
-        dpg.add_theme_style(
-            dpg.mvStyleVar_WindowRounding, 12, parent=component
-        )
+        dpg.add_theme_style(dpg.mvStyleVar_WindowRounding, 12, parent=component)
 
-        dpg.add_theme_style(
-            dpg.mvStyleVar_ChildRounding, 12, parent=component
-        )
+        dpg.add_theme_style(dpg.mvStyleVar_ChildRounding, 12, parent=component)
 
-        dpg.add_theme_style(
-            dpg.mvStyleVar_FrameRounding, 6, parent=component
-        )
+        dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 6, parent=component)
 
-        dpg.add_theme_style(
-            dpg.mvStyleVar_PopupRounding, 0, parent=component
-        )
+        dpg.add_theme_style(dpg.mvStyleVar_PopupRounding, 0, parent=component)
 
-        dpg.add_theme_style(
-            dpg.mvStyleVar_ScrollbarRounding, 12, parent=component
-        )
+        dpg.add_theme_style(dpg.mvStyleVar_ScrollbarRounding, 12, parent=component)
 
-        dpg.add_theme_style(
-            dpg.mvStyleVar_GrabRounding, 0, parent=component
-        )
+        dpg.add_theme_style(dpg.mvStyleVar_GrabRounding, 0, parent=component)
 
-        dpg.add_theme_style(
-            dpg.mvStyleVar_TabRounding, 4, parent=component
-        )
+        dpg.add_theme_style(dpg.mvStyleVar_TabRounding, 4, parent=component)
 
         # Alignment
         dpg.add_theme_style(
@@ -171,14 +135,10 @@ class Themes(ColorTheme):
             dpg.mvStyleVar_ButtonTextAlign, 0.50, 0.50, parent=component
         )
 
-        dpg.add_theme_style(
-            dpg.mvStyleVar_SelectableTextAlign, 0, 0, parent=component
-        )
+        dpg.add_theme_style(dpg.mvStyleVar_SelectableTextAlign, 0, 0, parent=component)
 
     def _set_dark_palette(self, theme_parent: int | str):
-        component: int | str = dpg.add_theme_component(
-            dpg.mvAll, parent=theme_parent
-        )
+        component: int | str = dpg.add_theme_component(dpg.mvAll, parent=theme_parent)
 
         dpg.add_theme_color(
             dpg.mvThemeCol_Text,
