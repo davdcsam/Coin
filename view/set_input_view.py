@@ -82,27 +82,33 @@ class SetInputView:
         )
 
         self.input_take_profit: int | str = dpg.add_input_float(
+            parent=self.group_data_trade
+        )
+        dpg.configure_item(
+            self.input_take_profit,
             label="Take Profit",
+            min_value=0,
             callback=self.show_checker,
-            parent=self.group_data_trade,
         )
 
         self.input_stop_loss: int | str = dpg.add_input_float(
-            label="Stop Loss",
-            callback=self.show_checker,
             parent=self.group_data_trade,
         )
-
-        self.input_magic_number: int | str = dpg.add_input_int(
-            label="Magic Number",
+        dpg.configure_item(
+            self.input_stop_loss,
+            label="Stop Loss",
+            min_value=0,
             callback=self.show_checker,
-            parent=self.group_data_trade,
         )
 
         self.input_deviation_trade: int | str = dpg.add_input_int(
-            label="Deviation",
-            callback=self.show_checker,
             parent=self.group_data_trade,
+        )
+        dpg.configure_item(
+            self.input_deviation_trade,
+            label="Deviation",
+            min_value=0,
+            callback=self.show_checker,
         )
 
         # === Group Section Time == #
@@ -159,7 +165,7 @@ class SetInputView:
         )
 
         self.input_delay_time_connection: int | str = dpg.add_slider_double(
-            label="Deplay Time",
+            label="Delay Time",
             default_value=self.viewmodel.model_connection.delay_time,
             format="%.2f s",
             min_value=0.1,
