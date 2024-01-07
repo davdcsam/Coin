@@ -113,7 +113,7 @@ class WatchMarketView:
 
         self.symbol_info_name: int | str = dpg.add_text(
             default_value="",
-            label="Name",
+            label="Symbol",
             show_label=True,
             parent=self.group_symbol_info,
         )
