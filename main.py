@@ -50,7 +50,7 @@ def main():
     switch_view: SwitchView = SwitchView.getInstance()
 
     themes = Themes()
-    themes.set_global_dark_theme()
+    themes.dark()
 
     # · Trade · #
 

@@ -129,7 +129,7 @@ class Logs:
             pos=(15, 15),
         )
 
-        self.instance_themes.set_dark_theme_window(notification)
+        self.instance_themes.dark_window(notification)
 
         dpg.set_item_pos(
             notification,

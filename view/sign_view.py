@@ -34,7 +34,7 @@ class SignView:
             height=430,
         )
 
-        self.instance_themes.set_dark_theme_window(self.sign_in_window)
+        self.instance_themes.dark_window(self.sign_in_window)
 
         dpg.set_item_pos(
             self.sign_in_window,
@@ -150,7 +150,7 @@ class SignView:
             height=130,
         )
 
-        self.instance_themes.set_dark_theme_window(self.sign_out_window)
+        self.instance_themes.dark_window(self.sign_out_window)
 
         dpg.set_item_pos(
             self.sign_out_window,
