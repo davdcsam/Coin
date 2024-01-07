@@ -5,18 +5,23 @@ from typing import Any, Literal
 # Third Party Libraries
 
 # Owner Modules
+from model.trade.trade_model import TradeModel
+
 from model.sign_model import SignModel
 from utils.info_widgets import InfoWidgets
 
 
 class SignViewModel(InfoWidgets):
-    def __init__(self, model) -> None:
+    def __init__(self, model, model_connection) -> None:
+        self.model_connection: TradeModel = model_connection
         self.model: SignModel = model
         InfoWidgets.__init__(self)
         self.view = None
 
     def bind(self, view):
         self.view = view
+
+        self.model_connection.observe(self.view.notification_post_sing_out, "running")
 
     def fill_input_path(self) -> list:
         return self.model.get_fill_input_custom_terminal()

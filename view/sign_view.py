@@ -6,6 +6,7 @@ import dearpygui.dearpygui as dpg
 
 # Owner Modules
 from utils.fonts import Fonts
+from utils.logs import Logs
 from utils.switch_view import SwitchView
 from utils.themes import Themes
 
@@ -22,6 +23,7 @@ class SignView:
         # === Utils === #
 
         self.instance_fonts = Fonts()
+        self.instance_logs: Logs = Logs.getInstance()
         self.instance_switch_view: SwitchView = SwitchView.getInstance()
         self.instance_themes = Themes()
 
@@ -241,6 +243,15 @@ class SignView:
     def _accept_sign_out(self, sender, app_data):
         self.viewmodel.close_connection()
         self.instance_switch_view.switch("sign_in")
+
+    def notification_post_sing_out(self, change):
+        if change["new"] is False:
+            self.instance_logs.notification(
+                "The connection to the {} has been terminated.".format(
+                    dpg.get_value(self.input_path)
+                ),
+                "s",
+            )
 
     def _cancel_sign_out(self, sender, app_data):
         self.instance_switch_view.switch("loby")

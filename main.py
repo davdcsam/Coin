@@ -59,7 +59,7 @@ def main():
     # · Sign · #
 
     sign_model = SignModel()
-    sign_viewmodel = SignViewModel(sign_model)
+    sign_viewmodel = SignViewModel(sign_model, trade_model)
     sign_view = SignView(sign_viewmodel)
 
     # · SetInput · #
