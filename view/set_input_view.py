@@ -304,6 +304,11 @@ class SetInputView:
         dpg.hide_item(self.button_undeploy)
         self.viewmodel.change_bot_state(False)
 
+    def hide_undeploy(self, change):
+        if change["new"] is False:
+            dpg.show_item(self.button_checker)
+            dpg.hide_item(self.button_undeploy)
+
     def checker(self, sender, app_data):
         if self.viewmodel.checker():
             dpg.hide_item(self.button_checker)

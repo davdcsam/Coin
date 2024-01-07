@@ -3,7 +3,7 @@ import pprint
 import threading
 import time
 from datetime import datetime
-from typing import Any, Self, Hashable
+from typing import Self, Hashable
 
 # Third Party Libraries
 import MetaTrader5 as mt5
@@ -23,6 +23,8 @@ class Connection(HasTraits):
     """
 
     _instance = None
+    running = Any(default_value=False)
+    bot_status = Any(default_value=False)
 
     login_info = Any()
     login_info_input_alias_name = Any()
@@ -221,9 +223,7 @@ class Connection(HasTraits):
             self.instance_switch_view: SwitchView = SwitchView.getInstance()
 
             self.thread = None
-            self.running: bool = False
             self.delay_time = 0.5
-            self.bot_status: bool = False
             self.init_flag = False
             self.deinit_flag = False
             self.formated_inputs: dict = {}

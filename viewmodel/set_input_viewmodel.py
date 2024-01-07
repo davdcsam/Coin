@@ -31,6 +31,8 @@ class SetInputViewModel(InfoWidgets):
         ]
         for item_observed in items_observed:
             self.model_connection.observe(view.format_items, item_observed)
+        
+        self.model_connection.observe(view.hide_undeploy, "bot_status")
 
     def load_inputs(self) -> dict[str, Any] | Literal[False]:
         return self.model.load_inputs_file()
