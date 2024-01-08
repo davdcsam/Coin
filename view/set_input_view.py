@@ -201,14 +201,74 @@ class SetInputView:
             parent=self.group_manager_bot,
         )
 
-        # dpg.add_button(label="Test", callback=lambda: print(dpg.get_item_pos(self.button_checker), dpg.get_item_pos(self.input_lot_size)), parent=self.group_manager_bot)
-
         self.instance_fonts.set_font_items(
             [
                 self.title_bot_manager,
                 self.title_data_trade,
                 self.title_section_time,
             ]
+        )
+
+        # === Build Checker View === #
+
+        self.checker_window: int | str = dpg.add_window(
+            label="Checker Result",
+            width=500,
+            height=400,
+            no_collapse=True,
+            show=False,
+        )
+
+        dpg.set_item_pos(
+            self.checker_window,
+            pos=(
+                (
+                    int(dpg.get_viewport_width())
+                    - int(dpg.get_item_width(self.checker_window))
+                )
+                / 2,
+                (
+                    int(dpg.get_viewport_height())
+                    - int(dpg.get_item_height(self.checker_window))
+                )
+                / 2,
+            ),
+        )
+
+        self.order_check_comment: int | str = dpg.add_text(
+            label="Comment",
+            show_label=True,
+            parent=self.checker_window,
+        )
+
+        self.order_check_retcode: int | str = dpg.add_text(
+            label="Retcode",
+            show_label=True,
+            parent=self.checker_window,
+        )
+
+        self.order_calc_profit: int | str = dpg.add_text(
+            label="Calculated Profit",
+            show_label=True,
+            parent=self.checker_window,
+        )
+
+        self.order_check_request_volume: int | str = dpg.add_text(
+            label="Volume",
+            show_label=True,
+            parent=self.checker_window,
+        )
+
+        self.order_check_request_price: int | str = dpg.add_text(
+            label="Simulated Price",
+            show_label=True,
+            parent=self.checker_window,
+        )
+
+        self.order_check_request_tp: int | str = dpg.add_text(
+            label="Simulated Take Profit",
+            show_label=True,
+            parent=self.checker_window,
         )
 
         self.viewmodel.bind_inputs(self)
@@ -252,6 +312,9 @@ class SetInputView:
     def save_last_inputs(self):
         self.viewmodel.save_last_input()
 
+    def update_checker_item(self):
+        pass
+
     def format_items(self, change):
         if change["new"] is None:
             return
@@ -294,6 +357,8 @@ class SetInputView:
             dpg.hide_item(self.button_undeploy)
             self.viewmodel.change_bot_state(False)
             self.save_last_inputs()
+
+        dpg.show_item(self.checker_window)
 
     def delay_time_connection(self, sender, app_data):
         self.viewmodel.change_delay_time(app_data)

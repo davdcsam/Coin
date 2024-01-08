@@ -1,10 +1,11 @@
 # Standard Libraries
 from datetime import datetime
 from pprint import pprint
-from typing import Any
+
 
 # Third Party Libraries
 import MetaTrader5 as mt5
+from traitlets import Any
 
 # Owner Modules
 from connection.connection import Connection
@@ -16,6 +17,17 @@ from utils.manager_files import ManagerFiles
 
 
 class TradeModel(Connection):
+    order_check = Any()
+    order_check_retcode = Any()
+    order_check_comment = Any()
+
+    order_check_request = Any()
+    order_check_request_volume = Any()
+    order_check_request_price = Any()
+    order_check_request_tp = Any()
+
+    order_calc_profit = Any()
+
     def __init__(self) -> None:
         super().__init__()
         self.instance_section_time = SectionTimeModule()
@@ -25,8 +37,8 @@ class TradeModel(Connection):
         self,
         volume: float,
         type_positions: mt5.ORDER_TYPE_BUY | mt5.ORDER_TYPE_SELL,
-        take_profit: float,
-        stop_loss: float,
+        take_profit: int,
+        stop_loss: int,
         deviation_trade: int,
     ):
         """
@@ -77,38 +89,42 @@ class TradeModel(Connection):
             formated_inputs["input_stop_loss"],
             formated_inputs["input_deviation_trade"],
         ):
-            order_check_result = mt5.order_check(request)
+            order_check = mt5.order_check(request)
 
-            if not order_check_result:
+            if not order_check:
                 self.instance_logs.notification(
                     "Error when indexing request format to check order. Contact to bot developer.",
                     "e",
                 )
                 return False
 
-            if order_check_result.retcode != mt5.TRADE_RETCODE_INVALID_FILL:
-                self.symbol_info_filling_mode_real = (
-                    order_check_result.request.type_filling
-                )
+            if order_check.retcode != mt5.TRADE_RETCODE_INVALID_FILL:
+                self.symbol_info_filling_mode_real = order_check.request.type_filling
                 break
 
-        if order_check_result.retcode == 0:
-            self.instance_logs.notification(
-                "{} order can be placed".format(formated_inputs["input_order_type"]),
-                "t",
-            )
-        else:
-            self.instance_logs.notification(
-                "{} order can [ NOT ] be placed. Error:{} {}.".format(
-                    formated_inputs["input_order_type"],
-                    order_check_result.retcode,
-                    order_check_result.comment,
-                ),
-                "t",
-            )
-            return False
+        self.order_check = order_check._asdict()
+        for k, v in self.order_check.items():
+            if not hasattr(self, f"order_check_{k}"):
+                continue
+            self.__setattr__(f"order_check_{k}", v)
 
-        return True
+        self.order_check_request = self.order_check["request"]._asdict()
+        for k, v in self.order_check_request.items():
+            if not hasattr(self, f"order_check_request_{k}"):
+                continue
+            self.__setattr__(f"order_check_request_{k}", v)
+
+        if order_check.retcode == 0:
+            self.order_calc_profit = mt5.order_calc_profit(
+                self.order_check_request["action"],
+                self.order_check_request["symbol"],
+                self.order_check_request["volume"],
+                self.order_check_request["price"],
+                self.order_check_request["sl"],
+            )            
+            return True
+        else:
+            return False
 
     def checker_inputs(self, inputs: dict) -> bool:
         formated_inputs: dict[str, Any] = ManagerFiles.get_data_formated(inputs)
@@ -132,8 +148,8 @@ class TradeModel(Connection):
         self,
         volume: float,
         type_positions: mt5.ORDER_TYPE_BUY | mt5.ORDER_TYPE_SELL,
-        take_profit: float,
-        stop_loss: float,
+        take_profit: int,
+        stop_loss: int,
         deviation_trade: int,
     ):
         trade_request = {
@@ -177,9 +193,9 @@ class TradeModel(Connection):
                 self.formated_inputs["input_deviation_trade"],
             )
 
-            order_check_result = mt5.order_check(request)
+            order_check = mt5.order_check(request)
 
-            if order_check_result.retcode == 0:
+            if order_check.retcode == 0:
                 self.instance_logs.notification(
                     "{} order can be placed".format(
                         self.formated_inputs["input_order_type"]
@@ -190,8 +206,8 @@ class TradeModel(Connection):
                 self.instance_logs.notification(
                     "{} order can [ NOT ] be placed. Error:{} {}.".format(
                         self.formated_inputs["input_order_type"],
-                        order_check_result.retcode,
-                        order_check_result.comment,
+                        order_check.retcode,
+                        order_check.comment,
                     ),
                     "t",
                 )
@@ -208,8 +224,8 @@ class TradeModel(Connection):
                 self.instance_logs.notification(
                     "{} order was [NOT] placed. Error: {} {}.".format(
                         self.formated_inputs["input_order_type"],
-                        order_check_result.retcode,
-                        order_check_result.comment,
+                        order_check.retcode,
+                        order_check.comment,
                     )
                 )
             else:
