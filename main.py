@@ -30,7 +30,13 @@ def main():
     dpg.create_context()
 
     dpg.create_viewport(
-        title="{}".format(os.path.dirname(os.getcwd())),
+        title="Coin",
+        large_icon="{}".format(
+            os.path.join(os.getcwd(), "assets", "logo", "coin_standard.ico")
+        ),
+        small_icon="{}".format(
+            os.path.join(os.getcwd(), "assets", "logo", "coin_standard.ico")
+        ),
         width=700,
         height=900,
         max_width=700,
