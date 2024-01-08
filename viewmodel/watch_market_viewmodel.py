@@ -5,11 +5,12 @@ from typing import Any
 from connection.connection import Connection
 
 # Owner Modules
-
+from utils.switch_view import SwitchView
 
 class WatchMarketViewModel:
     def __init__(self, model_connection: Connection | Any) -> None:
         self.model_connection: Connection | Any = model_connection
+        self.instance_switch_view: SwitchView = SwitchView.getInstance()
 
     def bind(self, view):
         items_observed: list[str] = [
@@ -28,6 +29,8 @@ class WatchMarketViewModel:
         ]
         for item_observed in items_observed:
             self.model_connection.observe(view.update_items, item_observed)
+
+        self.instance_switch_view.observe(view.callback_switch_view, "current_view")
 
         tables_observed: list[str] = [
             "terminal_info",

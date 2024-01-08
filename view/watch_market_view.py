@@ -244,6 +244,10 @@ class WatchMarketView:
 
         self.viewmodel.bind(self)
 
+    def callback_switch_view(self, change):
+        if change["new"] == "sign_out":
+            dpg.hide_item(self.full_view_window)
+
     def update_items(self, change):
         if change["new"] is None:
             return

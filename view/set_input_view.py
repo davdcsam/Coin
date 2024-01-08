@@ -289,7 +289,10 @@ class SetInputView:
             dpg.hide_item(self.button_deploy)
             dpg.hide_item(self.button_undeploy)
         if change["old"] == "sign_out" and change["new"] == "loby":
-            dpg.show_item(self.checker_window)
+            checker_window_confi: dict = dpg.get_item_configuration(self.checker_window)
+            button_deploy_confi: dict = dpg.get_item_configuration(self.button_deploy)
+            if "show" in checker_window_confi and button_deploy_confi["show"] is True:
+                dpg.show_item(self.checker_window)
 
     def show_checker(self, sender, app_data):
         dpg.hide_item(self.button_deploy)
