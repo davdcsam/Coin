@@ -29,8 +29,19 @@ class SetInputViewModel(InfoWidgets):
         ]
         for item_observed in items_observed:
             self.model_connection.observe(view.format_items, item_observed)
-        
+
         self.model_connection.observe(view.hide_undeploy, "bot_status")
+
+        order_check_items_observed: list[str] = [
+            "order_check_retcode",
+            "order_check_comment",
+            "order_check_request_volume",
+            "order_check_request_price",
+            "order_check_request_tp",
+            "order_calc_profit",
+        ]
+        for item_observed in order_check_items_observed:
+            self.model_connection.observe(view.update_checker_items, item_observed)
 
     def load_inputs(self) -> dict[str, Any] | Literal[False]:
         return self.model.load_inputs_file()

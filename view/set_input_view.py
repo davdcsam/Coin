@@ -312,8 +312,36 @@ class SetInputView:
     def save_last_inputs(self):
         self.viewmodel.save_last_input()
 
-    def update_checker_item(self):
-        pass
+    def update_checker_items(self, change):
+        if change["new"] is None:
+            return
+
+        items: list[str] = [
+            "order_check_retcode",
+            "order_check_comment",
+            "order_check_request_volume",
+            "order_check_request_price",
+            "order_check_request_tp",
+            "order_calc_profit",
+        ]
+        for item in items:
+            if (
+                item in change["name"]
+                and hasattr(self, change["name"])
+                and dpg.does_item_exist(self.__getattribute__(change["name"]))
+            ):
+                if item in [
+                    "order_check_retcode",
+                    "order_check_comment",
+                ]:
+                    continue
+                if item in [
+                    "order_check_request_volume",
+                    "order_check_request_price",
+                    "order_check_request_tp",
+                    "order_calc_profit",
+                ]:
+                    continue
 
     def format_items(self, change):
         if change["new"] is None:
