@@ -146,6 +146,27 @@ class WatchMarketView:
             parent=self.group_symbol_info,
         )
 
+        self.symbol_info_volume_min: int | str = dpg.add_text(
+            default_value="",
+            label="Volume Min",
+            show_label=True,
+            parent=self.group_symbol_info,
+        )
+
+        self.symbol_info_volume_max: int | str = dpg.add_text(
+            default_value="",
+            label="Volume Max",
+            show_label=True,
+            parent=self.group_symbol_info,
+        )
+
+        self.symbol_info_volume_step: int | str = dpg.add_text(
+            default_value="",
+            label="Volume Step",
+            show_label=True,
+            parent=self.group_symbol_info,
+        )
+
         # === Group Full View === #
 
         self.full_view_window: int | str = dpg.add_window(
@@ -265,6 +286,9 @@ class WatchMarketView:
             "symbol_info_time",
             "symbol_info_ask",
             "symbol_info_bid",
+            "symbol_info_volume_min",
+            "symbol_info_volume_max",
+            "symbol_info_volume_step",
         ]
         for item in items:
             if (

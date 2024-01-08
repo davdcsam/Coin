@@ -26,6 +26,9 @@ class WatchMarketViewModel:
             "symbol_info_time",
             "symbol_info_ask",
             "symbol_info_bid",
+            "symbol_info_volume_min",
+            "symbol_info_volume_max",
+            "symbol_info_volume_step",
         ]
         for item_observed in items_observed:
             self.model_connection.observe(view.update_items, item_observed)
