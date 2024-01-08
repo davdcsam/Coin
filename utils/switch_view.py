@@ -3,13 +3,15 @@ from typing import Self
 
 # Third Party Libraries
 import dearpygui.dearpygui as dpg
+from traitlets import HasTraits, observe, Any
 
 # Onwer Modules
 from utils.logs import Logs
 
 
-class SwitchView:
+class SwitchView(HasTraits):
     _instance = None
+    current_view = Any()
 
     class AutoDict(dict):
         """
@@ -41,7 +43,6 @@ class SwitchView:
             )
         else:
             SwitchView._instance: Self = self
-            self.current_view: str = None
             self.instance_logs: Logs = Logs.getInstance()
 
     def set_page(

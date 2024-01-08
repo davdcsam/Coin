@@ -281,6 +281,16 @@ class SetInputView:
         if dpg.does_item_exist(item):
             dpg.set_value(item, value)
 
+    def callback_switch_view(self, change):
+        if change["new"] == "sign_out":
+            dpg.hide_item(self.checker_window)
+        if change["new"] == "sign_in":
+            dpg.show_item(self.button_checker)
+            dpg.hide_item(self.button_deploy)
+            dpg.hide_item(self.button_undeploy)
+        if change["old"] == "sign_out" and change["new"] == "loby":
+            dpg.show_item(self.checker_window)
+
     def show_checker(self, sender, app_data):
         dpg.hide_item(self.button_deploy)
         dpg.show_item(self.button_checker)
@@ -334,6 +344,13 @@ class SetInputView:
                 and hasattr(self, change["name"])
                 and dpg.does_item_exist(self.__getattribute__(change["name"]))
             ):
+                if item == "order_check_comment" and change["new"] == "Done":
+                    dpg.set_value(
+                        self.__getattribute__(item),
+                        "Postition can be placed",
+                    )
+                    continue
+
                 if item in [
                     "order_check_comment",
                     "order_check_retcode",

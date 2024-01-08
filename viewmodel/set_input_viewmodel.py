@@ -8,6 +8,7 @@ from connection.connection import Connection
 # Owner Modules
 from model.set_input_model import SetInputModel
 from utils.info_widgets import InfoWidgets
+from utils.switch_view import SwitchView
 
 
 class SetInputViewModel(InfoWidgets):
@@ -18,6 +19,7 @@ class SetInputViewModel(InfoWidgets):
 
         # ··· Atr Class ··· #
         InfoWidgets.__init__(self)
+        self.instance_switch_view: SwitchView = SwitchView.getInstance()
         self.view = None
 
     def bind_inputs(self, view):
@@ -42,6 +44,8 @@ class SetInputViewModel(InfoWidgets):
         ]
         for item_observed in order_check_items_observed:
             self.model_connection.observe(view.update_checker_items, item_observed)
+
+        self.instance_switch_view.observe(view.callback_switch_view, "current_view")
 
     def load_inputs(self) -> dict[str, Any] | Literal[False]:
         return self.model.load_inputs_file()
