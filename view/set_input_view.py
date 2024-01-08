@@ -213,8 +213,8 @@ class SetInputView:
 
         self.checker_window: int | str = dpg.add_window(
             label="Checker Result",
-            width=500,
-            height=400,
+            width=400,
+            height=225,
             no_collapse=True,
             show=False,
         )
@@ -235,40 +235,44 @@ class SetInputView:
             ),
         )
 
+        self.group_checker: int | str = dpg.add_group(
+            width=200, parent=self.checker_window
+        )
+
         self.order_check_comment: int | str = dpg.add_text(
             label="Comment",
             show_label=True,
-            parent=self.checker_window,
+            parent=self.group_checker,
         )
 
         self.order_check_retcode: int | str = dpg.add_text(
             label="Retcode",
             show_label=True,
-            parent=self.checker_window,
+            parent=self.group_checker,
         )
 
         self.order_calc_profit: int | str = dpg.add_text(
             label="Calculated Profit",
             show_label=True,
-            parent=self.checker_window,
+            parent=self.group_checker,
         )
 
         self.order_check_request_volume: int | str = dpg.add_text(
             label="Volume",
             show_label=True,
-            parent=self.checker_window,
+            parent=self.group_checker,
         )
 
         self.order_check_request_price: int | str = dpg.add_text(
             label="Simulated Price",
             show_label=True,
-            parent=self.checker_window,
+            parent=self.group_checker,
         )
 
         self.order_check_request_tp: int | str = dpg.add_text(
             label="Simulated Take Profit",
             show_label=True,
-            parent=self.checker_window,
+            parent=self.group_checker,
         )
 
         self.viewmodel.bind_inputs(self)
@@ -317,8 +321,8 @@ class SetInputView:
             return
 
         items: list[str] = [
-            "order_check_retcode",
             "order_check_comment",
+            "order_check_retcode",
             "order_check_request_volume",
             "order_check_request_price",
             "order_check_request_tp",
@@ -331,16 +335,41 @@ class SetInputView:
                 and dpg.does_item_exist(self.__getattribute__(change["name"]))
             ):
                 if item in [
-                    "order_check_retcode",
                     "order_check_comment",
-                ]:
-                    continue
-                if item in [
+                    "order_check_retcode",
                     "order_check_request_volume",
+                ]:
+                    dpg.set_value(
+                        self.__getattribute__(item),
+                        change["new"],
+                    )
+                    continue
+
+                if item in [
                     "order_check_request_price",
                     "order_check_request_tp",
-                    "order_calc_profit",
                 ]:
+                    dpg.set_value(
+                        self.__getattribute__(change["name"]),
+                        str(
+                            "{} {:,."
+                            + str(self.viewmodel.model_connection.symbol_info_digits)
+                            + "f}"
+                        ).format(
+                            self.viewmodel.model_connection.account_info["currency"],
+                            float(change["new"]),
+                        ),
+                    )
+                    continue
+
+                if item == "order_calc_profit":
+                    dpg.set_value(
+                        self.__getattribute__(change["name"]),
+                        "{} {:,.2f}".format(
+                            self.viewmodel.model_connection.account_info["currency"],
+                            float(change["new"]),
+                        ),
+                    )
                     continue
 
     def format_items(self, change):
