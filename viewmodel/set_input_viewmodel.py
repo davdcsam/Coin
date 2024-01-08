@@ -26,8 +26,6 @@ class SetInputViewModel(InfoWidgets):
             "symbol_info_volume_min",
             "symbol_info_volume_max",
             "symbol_info_volume_step",
-            "symbol_info_digits",
-            "account_info_currency",
         ]
         for item_observed in items_observed:
             self.model_connection.observe(view.format_items, item_observed)

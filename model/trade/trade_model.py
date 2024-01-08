@@ -53,13 +53,13 @@ class TradeModel(Connection):
             # If the order type is Buy, calculate the price, stop loss, and take profit
             if type_positions == mt5.ORDER_TYPE_BUY:
                 price = self.symbol_info_ask
-                sl = round(price - stop_loss, self.symbol_info_digits)
-                tp = round(price + take_profit, self.symbol_info_digits)
+                sl = price - stop_loss * self.symbol_info_point
+                tp = price + take_profit * self.symbol_info_point
             # If the order type is Sell, calculate the price, stop loss, and take profit
             elif type_positions == mt5.ORDER_TYPE_SELL:
                 price = self.symbol_info_bid
-                sl = round(price + stop_loss, self.symbol_info_digits)
-                tp = round(price - take_profit, self.symbol_info_digits)
+                sl = price + stop_loss * self.symbol_info_point
+                tp = price - take_profit * self.symbol_info_point
             # Update the trade request with the calculated price, stop loss, and take profit
             trade_request.update({"price": price, "sl": sl, "tp": tp})
 
@@ -147,17 +147,16 @@ class TradeModel(Connection):
             "type_time": self.symbol_info_order_gtc_mode,
             "type_filling": self.symbol_info_filling_mode_real,
         }
-
         # If the order type is Buy, calculate the price, stop loss, and take profit
         if type_positions == mt5.ORDER_TYPE_BUY:
             price = self.symbol_info_ask
-            sl = round(price - stop_loss, self.symbol_info_digits)
-            tp = round(price + take_profit, self.symbol_info_digits)
+            sl = price - stop_loss * self.symbol_info_point
+            tp = price + take_profit * self.symbol_info_point
         # If the order type is Sell, calculate the price, stop loss, and take profit
         elif type_positions == mt5.ORDER_TYPE_SELL:
             price = self.symbol_info_bid
-            sl = round(price + stop_loss, self.symbol_info_digits)
-            tp = round(price - take_profit, self.symbol_info_digits)
+            sl = price + stop_loss * self.symbol_info_point
+            tp = price - take_profit * self.symbol_info_point
         # Update the trade request with the calculated price, stop loss, and take profit
         trade_request.update({"price": price, "sl": sl, "tp": tp})
 

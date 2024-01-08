@@ -81,23 +81,27 @@ class SetInputView:
             parent=self.group_data_trade,
         )
 
-        self.input_take_profit: int | str = dpg.add_input_float(
+        self.input_take_profit: int | str = dpg.add_input_int(
             parent=self.group_data_trade
         )
         dpg.configure_item(
             self.input_take_profit,
-            label="Take Profit",
+            label="TP in Points",
             min_value=0,
+            step=1,
+            step_fast=3,
             callback=self.show_checker,
         )
 
-        self.input_stop_loss: int | str = dpg.add_input_float(
+        self.input_stop_loss: int | str = dpg.add_input_int(
             parent=self.group_data_trade,
         )
         dpg.configure_item(
             self.input_stop_loss,
-            label="Stop Loss",
+            label="SL in Points",
             min_value=0,
+            step=1,
+            step_fast=3,
             callback=self.show_checker,
         )
 
@@ -108,13 +112,15 @@ class SetInputView:
             self.input_deviation_trade,
             label="Deviation",
             min_value=0,
+            step=1,
+            step_fast=2,
             callback=self.show_checker,
         )
 
         # === Group Section Time == #
 
         self.group_section_time: int | str = dpg.add_group(
-            width=180, parent=self.child_window
+            width=200, parent=self.child_window
         )
 
         self.title_section_time: int | str = dpg.add_text(
@@ -183,7 +189,7 @@ class SetInputView:
 
         self.button_undeploy: int | str = dpg.add_button(
             label="Undeploy",
-            pos=(136, 525),
+            pos=(136, 499),
             callback=self.undeploy,
             show=False,
             parent=self.group_manager_bot,
@@ -265,34 +271,6 @@ class SetInputView:
             if change["name"] in config_dict:
                 dpg.configure_item(self.input_lot_size, **config_dict[change["name"]])
                 return
-
-        if (
-            "symbol_info_digits" in change["name"]
-            or "account_info_currency" in change["name"]
-        ):
-            for atr in [
-                self.input_take_profit,
-                self.input_stop_loss,
-            ]:
-                if dpg.does_item_exist(atr):
-                    if "symbol_info_digits" in change["name"]:
-                        dpg.configure_item(
-                            atr,
-                            format=Formater.change_decimals_from_format_num(
-                                dpg.get_item_configuration(atr)["format"], change["new"]
-                            ),
-                        )
-                    else:
-                        if change["new"] in dpg.get_item_configuration(atr)["format"]:
-                            continue
-
-                        dpg.configure_item(
-                            atr,
-                            format="{} {}".format(
-                                dpg.get_item_configuration(atr)["format"], change["new"]
-                            ),
-                        )
-            return
 
     def deploy(self, sender, app_data):
         dpg.show_item(self.button_undeploy)
