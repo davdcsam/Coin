@@ -284,6 +284,9 @@ class Connection(HasTraits):
 
         self.login_info: dict = login_info
 
+        # Set the value to false to prevent issue send operation
+        self.bot_status = False
+
         # Set the running value to True and start the trading thread
         self.running = True
         self.thread = threading.Thread(target=self._method)

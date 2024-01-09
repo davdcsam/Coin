@@ -1,4 +1,5 @@
 # Standard Libraries
+import pprint
 from typing import Any, Literal
 
 # Third Party Libraries
@@ -245,7 +246,8 @@ class SignView:
         self.instance_switch_view.switch("sign_in")
 
     def notification_post_sing_out(self, change):
-        if change["new"] is False:
+        pprint.pprint(change)
+        if change["new"] == "sign_in":
             self.instance_logs.notification(
                 "The connection to the {} has been terminated.".format(
                     dpg.get_value(self.input_path)

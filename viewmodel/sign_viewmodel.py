@@ -8,20 +8,22 @@ from typing import Any, Literal
 from model.trade.trade_model import TradeModel
 
 from model.sign_model import SignModel
-from utils.info_widgets import InfoWidgets
 
+from utils.info_widgets import InfoWidgets
+from utils.switch_view import SwitchView
 
 class SignViewModel(InfoWidgets):
     def __init__(self, model, model_connection) -> None:
+        InfoWidgets.__init__(self)
         self.model_connection: TradeModel = model_connection
         self.model: SignModel = model
-        InfoWidgets.__init__(self)
+        self.instance_switch_view: SwitchView = SwitchView.getInstance()
         self.view = None
 
     def bind(self, view):
         self.view = view
 
-        self.model_connection.observe(self.view.notification_post_sing_out, "running")
+        self.instance_switch_view.observe(self.view.notification_post_sing_out, "current_view")
 
     def fill_input_path(self) -> list:
         return self.model.get_fill_input_custom_terminal()
