@@ -72,6 +72,7 @@ class SetInputView:
             default_value=list(self.viewmodel.model_connection.order_types_dict.keys())[
                 0
             ],
+            callback=self.show_checker,
             parent=self.group_data_trade,
         )
 
