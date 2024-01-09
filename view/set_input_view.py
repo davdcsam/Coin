@@ -181,8 +181,15 @@ class SetInputView:
             parent=self.group_manager_bot,
         )
 
+        self.button_checker: int | str = dpg.add_button(
+            label="Checker",
+            callback=self.checker,
+            parent=self.group_manager_bot,
+        )
+
         self.button_deploy: int | str = dpg.add_button(
             label="Deploy",
+            pos=(8, 525),
             callback=self.deploy,
             show=False,
             parent=self.group_manager_bot,
@@ -190,15 +197,9 @@ class SetInputView:
 
         self.button_undeploy: int | str = dpg.add_button(
             label="Undeploy",
-            pos=(136, 499),
+            pos=(136, 525),
             callback=self.undeploy,
             show=False,
-            parent=self.group_manager_bot,
-        )
-
-        self.button_checker: int | str = dpg.add_button(
-            label="Checker",
-            callback=self.checker,
             parent=self.group_manager_bot,
         )
 
