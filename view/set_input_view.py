@@ -414,6 +414,7 @@ class SetInputView:
 
     def deploy(self, sender, app_data):
         dpg.show_item(self.button_undeploy)
+        dpg.hide_item(self.checker_window)
         dpg.hide_item(self.button_deploy)
         self.viewmodel.change_bot_state(True)
 
