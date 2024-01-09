@@ -40,7 +40,9 @@ class SetInputViewModel(InfoWidgets):
             "order_check_request_volume",
             "order_check_request_price",
             "order_check_request_tp",
+            "order_check_request_sl",
             "order_calc_profit",
+            "order_calc_loss",
         ]
         for item_observed in order_check_items_observed:
             self.model_connection.observe(view.update_checker_items, item_observed)

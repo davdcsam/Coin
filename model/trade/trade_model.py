@@ -25,8 +25,10 @@ class TradeModel(Connection):
     order_check_request_volume = Any()
     order_check_request_price = Any()
     order_check_request_tp = Any()
+    order_check_request_sl = Any()
 
     order_calc_profit = Any()
+    order_calc_loss = Any()
 
     def __init__(self) -> None:
         super().__init__()
@@ -116,14 +118,23 @@ class TradeModel(Connection):
 
         if order_check.retcode == 0:
             self.order_calc_profit = mt5.order_calc_profit(
-                self.order_check_request["action"],
+                self.order_types_dict[formated_inputs["input_order_type"]],
+                self.order_check_request["symbol"],
+                self.order_check_request["volume"],
+                self.order_check_request["price"],
+                self.order_check_request["tp"],
+            )
+            self.order_calc_loss = mt5.order_calc_profit(
+                self.order_types_dict[formated_inputs["input_order_type"]],
                 self.order_check_request["symbol"],
                 self.order_check_request["volume"],
                 self.order_check_request["price"],
                 self.order_check_request["sl"],
-            )
+            )            
             return True
         else:
+            self.order_calc_profit = 0
+            self.order_calc_loss = 0
             return False
 
     def checker_inputs(self, inputs: dict) -> bool:

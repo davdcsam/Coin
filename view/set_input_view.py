@@ -216,8 +216,10 @@ class SetInputView:
         self.checker_window: int | str = dpg.add_window(
             label="Checker Result",
             width=400,
-            height=225,
+            height=300,
             no_collapse=True,
+            no_resize=True,
+            no_saved_settings=True,
             show=False,
         )
 
@@ -244,6 +246,7 @@ class SetInputView:
         self.order_check_comment: int | str = dpg.add_text(
             label="Comment",
             show_label=True,
+            wrap=dpg.get_item_width(self.checker_window) * 1 / 2,
             parent=self.group_checker,
         )
 
@@ -254,7 +257,13 @@ class SetInputView:
         )
 
         self.order_calc_profit: int | str = dpg.add_text(
-            label="Calculated Profit",
+            label="Simulated Profit",
+            show_label=True,
+            parent=self.group_checker,
+        )
+
+        self.order_calc_loss: int | str = dpg.add_text(
+            label="Simulated Loss",
             show_label=True,
             parent=self.group_checker,
         )
@@ -273,6 +282,12 @@ class SetInputView:
 
         self.order_check_request_tp: int | str = dpg.add_text(
             label="Simulated Take Profit",
+            show_label=True,
+            parent=self.group_checker,
+        )
+
+        self.order_check_request_sl: int | str = dpg.add_text(
+            label="Simulated Stop Loss",
             show_label=True,
             parent=self.group_checker,
         )
@@ -341,7 +356,9 @@ class SetInputView:
             "order_check_request_volume",
             "order_check_request_price",
             "order_check_request_tp",
+            "order_check_request_sl",
             "order_calc_profit",
+            "order_calc_loss",
         ]
         for item in items:
             if (
@@ -357,34 +374,23 @@ class SetInputView:
                     continue
 
                 if item in [
-                    "order_check_comment",
-                    "order_check_retcode",
-                    "order_check_request_volume",
-                ]:
-                    dpg.set_value(
-                        self.__getattribute__(item),
-                        change["new"],
-                    )
-                    continue
-
-                if item in [
                     "order_check_request_price",
                     "order_check_request_tp",
+                    "order_check_request_sl",
                 ]:
                     dpg.set_value(
                         self.__getattribute__(change["name"]),
                         str(
-                            "{} {:,."
+                            "{:,."
                             + str(self.viewmodel.model_connection.symbol_info_digits)
                             + "f}"
                         ).format(
-                            self.viewmodel.model_connection.account_info["currency"],
                             float(change["new"]),
                         ),
                     )
                     continue
 
-                if item == "order_calc_profit":
+                if item in ["order_calc_profit", "order_calc_loss"]:
                     dpg.set_value(
                         self.__getattribute__(change["name"]),
                         "{} {:,.2f}".format(
@@ -393,6 +399,11 @@ class SetInputView:
                         ),
                     )
                     continue
+
+                dpg.set_value(
+                    self.__getattribute__(item),
+                    change["new"],
+                )
 
     def format_items(self, change):
         if change["new"] is None:
