@@ -121,7 +121,7 @@ class TradeModel(Connection):
                 self.order_check_request["volume"],
                 self.order_check_request["price"],
                 self.order_check_request["sl"],
-            )            
+            )
             return True
         else:
             return False
@@ -141,6 +141,17 @@ class TradeModel(Connection):
                 "t",
             )
             return False
+
+        if (
+            formated_inputs["input_stop_loss"] * 0.01
+            > formated_inputs["input_deviation_trade"]
+            or formated_inputs["input_take_profit"] * 0.01
+            > formated_inputs["input_deviation_trade"]
+        ):
+            self.instance_logs.notification(
+                "The deviation may not be sufficient. If there is too much volatility the order could not be placed.",
+                "t",
+            )
 
         return True
 
@@ -184,7 +195,6 @@ class TradeModel(Connection):
         ) and self.instance_no_position.Any(
             self.formated_inputs, self.df_positions_total
         ):
-            print("Trade")
             request = self._build_request(
                 self.formated_inputs["input_lot_size"],
                 self.order_types_dict[self.formated_inputs["input_order_type"]],
@@ -197,14 +207,14 @@ class TradeModel(Connection):
 
             if order_check.retcode == 0:
                 self.instance_logs.notification(
-                    "{} order can be placed".format(
+                    "Order {} can be placed".format(
                         self.formated_inputs["input_order_type"]
                     ),
                     "t",
                 )
             else:
                 self.instance_logs.notification(
-                    "{} order can [ NOT ] be placed. Error:{} {}.".format(
+                    "Order {} cannot be placed. Error:{} {}.".format(
                         self.formated_inputs["input_order_type"],
                         order_check.retcode,
                         order_check.comment,
@@ -222,7 +232,7 @@ class TradeModel(Connection):
             # If the trade request was not successful, print an error message
             if order_result.retcode != mt5.TRADE_RETCODE_DONE:
                 self.instance_logs.notification(
-                    "{} order was [NOT] placed. Error: {} {}.".format(
+                    "Order {} has [not] ben placed. Error: {} {}.".format(
                         self.formated_inputs["input_order_type"],
                         order_check.retcode,
                         order_check.comment,
@@ -231,7 +241,7 @@ class TradeModel(Connection):
             else:
                 # If the trade request was successful
                 self.instance_logs.notification(
-                    "{} order was placed.".format(
+                    "Order {} has been placed.".format(
                         self.formated_inputs["input_order_type"],
                     )
                 )
