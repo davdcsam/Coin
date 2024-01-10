@@ -84,7 +84,7 @@ class SectionTimeModule:
         """
         broker_time: datetime = datetime.utcfromtimestamp(broker_time)
         # Checking if the given time is after the start time
-        if broker_time > self.time_start and broker_time < self.time_end:
+        if self.time_start <= broker_time <= self.time_end:
             self.state = True
         else:
             self.state = False

@@ -23,7 +23,7 @@ class NoPositionModule:
             return True
 
         positions_symbol_magic = positions_symbol[
-            positions_symbol["magic"] == inputs["input_magic_number"]
+            positions_symbol["magic"] == 0
         ]
 
         if positions_symbol_magic.empty:
