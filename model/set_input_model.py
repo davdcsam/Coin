@@ -48,8 +48,8 @@ class SetInputModel:
 
     def change_bot_state(self, status: bool, inputs: dict) -> None:
         if status and not self.instance_trade.bot_status:
-            self.instance_trade.formated_inputs = self.instance_manager_files.get_data_formated(
-                inputs
+            self.instance_trade.formated_inputs = (
+                self.instance_manager_files.get_data_formated(inputs)
             )
 
             self.instance_trade.init_flag = True
@@ -68,9 +68,7 @@ class SetInputModel:
             self.instance_logs.log("Bot was Undeployed", "t")
 
     def checker(self, inputs: dict) -> Literal[True] | None:
-        if self.instance_trade.checker_inputs(
-            inputs
-        ) and self.instance_trade.checker_positions(inputs):
+        if self.instance_trade.checker(inputs):
             return True
 
     def change_delay_time(self, deplay_time: float) -> None:

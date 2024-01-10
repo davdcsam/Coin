@@ -18,15 +18,8 @@ from utils.manager_files import ManagerFiles
 
 class TradeModel(Connection):
     order_check = Any()
-    order_check_retcode = Any()
-    order_check_comment = Any()
-
+    order_check_full_comment = Any()
     order_check_request = Any()
-    order_check_request_volume = Any()
-    order_check_request_price = Any()
-    order_check_request_tp = Any()
-    order_check_request_sl = Any()
-
     order_calc_profit = Any()
     order_calc_loss = Any()
 
@@ -35,56 +28,58 @@ class TradeModel(Connection):
         self.instance_section_time = SectionTimeModule()
         self.instance_no_position = NoPositionModule()
 
-    def _build_requests_for_check(
-        self,
-        volume: float,
-        type_positions: mt5.ORDER_TYPE_BUY | mt5.ORDER_TYPE_SELL,
-        take_profit: int,
-        stop_loss: int,
-        deviation_trade: int,
-    ):
-        """
-        Prepare a trade request with the necessary parameters
-        """
-        request_list = []
-        for filling_mode in [
-            mt5.ORDER_FILLING_FOK,
-            mt5.ORDER_FILLING_IOC,
-            mt5.ORDER_FILLING_RETURN,
-            mt5.ORDER_FILLING_BOC,
-        ]:
-            trade_request = {
-                "action": mt5.TRADE_ACTION_DEAL,
-                "symbol": self.symbol_info_name,
-                "volume": volume,
-                "type": type_positions,
-                "deviation": deviation_trade,
-                "magic": 0,
-                "comment": "",
-                "type_time": self.symbol_info_order_gtc_mode,
-                "type_filling": filling_mode,
-            }
-            # If the order type is Buy, calculate the price, stop loss, and take profit
-            if type_positions == mt5.ORDER_TYPE_BUY:
-                price = self.symbol_info_ask
-                sl = price - stop_loss * self.symbol_info_point
-                tp = price + take_profit * self.symbol_info_point
-            # If the order type is Sell, calculate the price, stop loss, and take profit
-            elif type_positions == mt5.ORDER_TYPE_SELL:
-                price = self.symbol_info_bid
-                sl = price + stop_loss * self.symbol_info_point
-                tp = price - take_profit * self.symbol_info_point
-            # Update the trade request with the calculated price, stop loss, and take profit
-            trade_request.update({"price": price, "sl": sl, "tp": tp})
+    """
+    ____ _  _ ____ ____ _  _ ____ ____
+    |    |__| |___ |    |_/  |___ |__/
+    |___ |  | |___ |___ | \_ |___ |  \
+    """
 
-            request_list.append(trade_request)
+    def checker(self, inputs: dict) -> bool:
+        self.order_check = None
+        self.order_check_full_comment = None
+        self.order_check_request = None
+        self.order_calc_profit = None
+        self.order_calc_loss = None
 
-        return request_list
-
-    def checker_positions(self, inputs: dict) -> bool:
         formated_inputs: dict[str, Any] = ManagerFiles.get_data_formated(inputs)
 
-        for request in self._build_requests_for_check(
+        if not self._checker_inputs(formated_inputs):
+            return False
+
+        if not self._checker_positions(formated_inputs):
+            return False
+
+        return True 
+
+    def _checker_inputs(self, formated_inputs: dict) -> bool:
+        start_time, end_time = self.instance_section_time.verify_existence_from_input(
+            formated_inputs, self.symbol_info_tick_time
+        )
+
+        if start_time == end_time:
+            self.instance_logs.notification(
+                "Start Time {} cannot equals to End Time {}".format(
+                    start_time.strftime("%H:%M:%S"), end_time.strftime("%H:%M:%S")
+                ),
+                "t",
+            )
+            return False
+
+        if (
+            formated_inputs["input_stop_loss"] * 0.01
+            > formated_inputs["input_deviation_trade"]
+            or formated_inputs["input_take_profit"] * 0.01
+            > formated_inputs["input_deviation_trade"]
+        ):
+            self.instance_logs.notification(
+                "The deviation may not be sufficient. If there is too much volatility the order could not be placed.",
+                "t",
+            )
+
+        return True
+
+    def _checker_positions(self, formated_inputs: dict) -> bool:
+        for request in self._checker_build_request(
             formated_inputs["input_lot_size"],
             self.order_types_dict[formated_inputs["input_order_type"]],
             formated_inputs["input_take_profit"],
@@ -130,43 +125,14 @@ class TradeModel(Connection):
                 self.order_check_request["volume"],
                 self.order_check_request["price"],
                 self.order_check_request["sl"],
-            )            
+            )
             return True
         else:
             self.order_calc_profit = 0
             self.order_calc_loss = 0
             return False
 
-    def checker_inputs(self, inputs: dict) -> bool:
-        formated_inputs: dict[str, Any] = ManagerFiles.get_data_formated(inputs)
-
-        start_time, end_time = self.instance_section_time.verify_existence_from_input(
-            formated_inputs, self.symbol_info_tick_time
-        )
-
-        if start_time == end_time:
-            self.instance_logs.notification(
-                "Start Time {} cannot equals to End Time {}".format(
-                    start_time.strftime("%H:%M:%S"), end_time.strftime("%H:%M:%S")
-                ),
-                "t",
-            )
-            return False
-
-        if (
-            formated_inputs["input_stop_loss"] * 0.01
-            > formated_inputs["input_deviation_trade"]
-            or formated_inputs["input_take_profit"] * 0.01
-            > formated_inputs["input_deviation_trade"]
-        ):
-            self.instance_logs.notification(
-                "The deviation may not be sufficient. If there is too much volatility the order could not be placed.",
-                "t",
-            )
-
-        return True
-
-    def _build_request(
+    def _checker_build_request(
         self,
         volume: float,
         type_positions: mt5.ORDER_TYPE_BUY | mt5.ORDER_TYPE_SELL,
@@ -174,31 +140,49 @@ class TradeModel(Connection):
         stop_loss: int,
         deviation_trade: int,
     ):
-        trade_request = {
-            "action": mt5.TRADE_ACTION_DEAL,
-            "symbol": self.symbol_info_name,
-            "volume": volume,
-            "type": type_positions,
-            "deviation": deviation_trade,
-            "magic": 0,
-            "comment": "",
-            "type_time": self.symbol_info_order_gtc_mode,
-            "type_filling": self.symbol_info_filling_mode_real,
-        }
-        # If the order type is Buy, calculate the price, stop loss, and take profit
-        if type_positions == mt5.ORDER_TYPE_BUY:
-            price = self.symbol_info_ask
-            sl = price - stop_loss * self.symbol_info_point
-            tp = price + take_profit * self.symbol_info_point
-        # If the order type is Sell, calculate the price, stop loss, and take profit
-        elif type_positions == mt5.ORDER_TYPE_SELL:
-            price = self.symbol_info_bid
-            sl = price + stop_loss * self.symbol_info_point
-            tp = price - take_profit * self.symbol_info_point
-        # Update the trade request with the calculated price, stop loss, and take profit
-        trade_request.update({"price": price, "sl": sl, "tp": tp})
+        """
+        Prepare a trade request with the necessary parameters
+        """
+        request_list = []
+        for filling_mode in [
+            mt5.ORDER_FILLING_FOK,
+            mt5.ORDER_FILLING_IOC,
+            mt5.ORDER_FILLING_RETURN,
+            mt5.ORDER_FILLING_BOC,
+        ]:
+            trade_request = {
+                "action": mt5.TRADE_ACTION_DEAL,
+                "symbol": self.symbol_info_name,
+                "volume": volume,
+                "type": type_positions,
+                "deviation": deviation_trade,
+                "magic": 0,
+                "comment": "",
+                "type_time": self.symbol_info_order_gtc_mode,
+                "type_filling": filling_mode,
+            }
+            # If the order type is Buy, calculate the price, stop loss, and take profit
+            if type_positions == mt5.ORDER_TYPE_BUY:
+                price = self.symbol_info_ask
+                sl = price - stop_loss * self.symbol_info_point
+                tp = price + take_profit * self.symbol_info_point
+            # If the order type is Sell, calculate the price, stop loss, and take profit
+            elif type_positions == mt5.ORDER_TYPE_SELL:
+                price = self.symbol_info_bid
+                sl = price + stop_loss * self.symbol_info_point
+                tp = price - take_profit * self.symbol_info_point
+            # Update the trade request with the calculated price, stop loss, and take profit
+            trade_request.update({"price": price, "sl": sl, "tp": tp})
 
-        return trade_request
+            request_list.append(trade_request)
+
+        return request_list
+
+    """
+    ____ ___  ____ ____ ____ ___ _ ____ _  _
+    |  | |__] |___ |__/ |__|  |  | |  | |\ |
+    |__| |    |___ |  \ |  |  |  | |__| | \|
+    """
 
     def _operation(self):
         if self.instance_section_time.Any(
@@ -206,7 +190,7 @@ class TradeModel(Connection):
         ) and self.instance_no_position.Any(
             self.formated_inputs, self.df_positions_total
         ):
-            request = self._build_request(
+            request = self._operation_build_request(
                 self.formated_inputs["input_lot_size"],
                 self.order_types_dict[self.formated_inputs["input_order_type"]],
                 self.formated_inputs["input_take_profit"],
@@ -260,6 +244,46 @@ class TradeModel(Connection):
             self.instance_logs.notification("Bot'll will shutdown.")
             self.deinit_flag = True
             self.bot_status = False
+
+    def _operation_build_request(
+        self,
+        volume: float,
+        type_positions: mt5.ORDER_TYPE_BUY | mt5.ORDER_TYPE_SELL,
+        take_profit: int,
+        stop_loss: int,
+        deviation_trade: int,
+    ):
+        trade_request = {
+            "action": mt5.TRADE_ACTION_DEAL,
+            "symbol": self.symbol_info_name,
+            "volume": volume,
+            "type": type_positions,
+            "deviation": deviation_trade,
+            "magic": 0,
+            "comment": "",
+            "type_time": self.symbol_info_order_gtc_mode,
+            "type_filling": self.symbol_info_filling_mode_real,
+        }
+        # If the order type is Buy, calculate the price, stop loss, and take profit
+        if type_positions == mt5.ORDER_TYPE_BUY:
+            price = self.symbol_info_ask
+            sl = price - stop_loss * self.symbol_info_point
+            tp = price + take_profit * self.symbol_info_point
+        # If the order type is Sell, calculate the price, stop loss, and take profit
+        elif type_positions == mt5.ORDER_TYPE_SELL:
+            price = self.symbol_info_bid
+            sl = price + stop_loss * self.symbol_info_point
+            tp = price - take_profit * self.symbol_info_point
+        # Update the trade request with the calculated price, stop loss, and take profit
+        trade_request.update({"price": price, "sl": sl, "tp": tp})
+
+        return trade_request
+
+    """
+    _  _ ____ ___  _ ____ _ ____ ___     ___  ____ ____ ____ ____ ____ ____ ____ ____
+    |\/| |  | |  \ | |___ | |___ |  \    |__] |__/ |  | |    |___ [__  [__  |___ [__ 
+    |  | |__| |__/ | |    | |___ |__/    |    |  \ |__| |___ |___ ___] ___] |___ ___]
+    """    
 
     def Init(self):
         """
