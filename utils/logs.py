@@ -134,7 +134,7 @@ class Logs:
 
         # Adding a new text widget for each message
         dpg.add_text(
-            f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} {self.format_type[f_type]} {message}",
+            "{} {} {}".format(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), self.format_type[f_type], message.replace("\n", "")),
             parent=self._container,
             wrap=dpg.get_item_width(self._container),
         )
@@ -157,7 +157,7 @@ class Logs:
         new_row: dict[str, str] = {
             "datetime": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "type": self.format_type[f_type],
-            "message": message,
+            "message": message.replace("\n", ""),
         }
 
         # Adding the new row to the DataFrame

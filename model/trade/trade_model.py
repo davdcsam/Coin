@@ -1,8 +1,6 @@
 # Standard Libraries
 from datetime import datetime
 from pprint import pprint
-from re import T
-
 
 # Third Party Libraries
 import MetaTrader5 as mt5
@@ -58,11 +56,22 @@ class TradeModel(Connection):
         formated_inputs: dict[str, Any] = ManagerFiles.get_data_formated(inputs)
 
         if not self._checker_inputs(formated_inputs):
+            self.instance_logs.internal_log(
+                f"Inputs didnt pass checker, {self.order_check_full_comment}", "c"
+            )
             return False
+        self.instance_logs.log("Inputs pass checker", "c")
 
         if not self._checker_positions(formated_inputs):
+            self.instance_logs.internal_log(
+                f"Inputs didnt pass checker, {self.order_check_full_comment}", "c"
+            )
             return False
+        self.instance_logs.log("Positions pass checker", "c")
 
+        self.instance_logs.internal_log(
+            f"Inputs pass checker, {self.order_check_full_comment}", "c"
+        )
         return True
 
     def _checker_inputs(self, formated_inputs: dict) -> bool:
@@ -76,7 +85,6 @@ class TradeModel(Connection):
                     start_time.strftime("%H:%M:%S"), end_time.strftime("%H:%M:%S")
                 )
             )
-
             return False
 
         if (
@@ -86,7 +94,6 @@ class TradeModel(Connection):
             > formated_inputs["input_deviation_trade"]
         ):
             self.order_check_full_comment += "The deviation may not be sufficient. If there is too much volatility the order could not be placed.\n"
-
         return True
 
     def _checker_positions(self, formated_inputs: dict) -> bool:
@@ -111,6 +118,8 @@ class TradeModel(Connection):
                 break
 
         self.order_check = order_check._asdict()
+        self.instance_logs.internal_log(str(self.order_check), "c")
+
         order_check_comment_temp = self.order_check["comment"]
         if order_check_comment_temp == "Done":
             self.order_check_full_comment += "{} order can be placed.\n".format(
@@ -253,6 +262,8 @@ class TradeModel(Connection):
                     )
                 )
 
+            self.instance_logs.log(self.order_result_full_comment, "t")
+            self.instance_logs.log(str(self.order_result), "t")
             self.instance_logs.notification("Bot'll will shutdown.")
             self.deinit_flag = True
             self.bot_status = False
@@ -315,7 +326,8 @@ class TradeModel(Connection):
                 self.instance_no_position.Any(
                     self.formated_inputs, self.df_positions_total
                 ),
-            ), "t"
+            ),
+            "t",
         )
 
     def Any(self):
