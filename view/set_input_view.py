@@ -556,8 +556,9 @@ class SetInputView:
 
     def hide_undeploy(self, change):
         if change["new"] is False:
+            if self.instance_switch_view.current_view == "loby":
+                dpg.show_item(self.trade_result_window)
             dpg.show_item(self.button_checker)
-            dpg.show_item(self.trade_result_window)
             dpg.hide_item(self.button_undeploy)
 
     def checker(self, sender, app_data):
