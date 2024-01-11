@@ -243,7 +243,7 @@ class SetInputView:
             width=200, parent=self.checker_window
         )
 
-        self.order_check_comment: int | str = dpg.add_text(
+        self.order_check_full_comment: int | str = dpg.add_text(
             label="Comment",
             show_label=True,
             wrap=dpg.get_item_width(self.checker_window) * 1 / 2,
@@ -347,11 +347,8 @@ class SetInputView:
         self.viewmodel.save_last_input()
 
     def update_checker_items(self, change):
-        if change["new"] is None:
-            return
-
         items: list[str] = [
-            "order_check_comment",
+            "order_check_full_comment",
             "order_check_retcode",
             "order_check_request_volume",
             "order_check_request_price",
@@ -366,10 +363,10 @@ class SetInputView:
                 and hasattr(self, change["name"])
                 and dpg.does_item_exist(self.__getattribute__(change["name"]))
             ):
-                if item == "order_check_comment" and change["new"] == "Done":
+                if item == "order_check_full_comment":
                     dpg.set_value(
                         self.__getattribute__(item),
-                        "Postition can be placed",
+                        change["new"],
                     )
                     continue
 

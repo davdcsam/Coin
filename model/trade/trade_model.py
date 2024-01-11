@@ -5,7 +5,7 @@ from pprint import pprint
 
 # Third Party Libraries
 import MetaTrader5 as mt5
-from traitlets import Any
+from traitlets import Any, Unicode
 
 # Owner Modules
 from connection.connection import Connection
@@ -18,8 +18,15 @@ from utils.manager_files import ManagerFiles
 
 class TradeModel(Connection):
     order_check = Any()
-    order_check_full_comment = Any()
+    order_check_retcode = Any()
+    order_check_full_comment = Unicode()
+
     order_check_request = Any()
+    order_check_request_volume = Any()
+    order_check_request_price = Any()
+    order_check_request_tp = Any()
+    order_check_request_sl = Any()
+
     order_calc_profit = Any()
     order_calc_loss = Any()
 
@@ -36,8 +43,15 @@ class TradeModel(Connection):
 
     def checker(self, inputs: dict) -> bool:
         self.order_check = None
-        self.order_check_full_comment = None
+        self.order_check_retcode = None
+        self.order_check_full_comment = ""
+
         self.order_check_request = None
+        self.order_check_request_volume = None
+        self.order_check_request_price = None
+        self.order_check_request_tp = None
+        self.order_check_request_sl = None
+
         self.order_calc_profit = None
         self.order_calc_loss = None
 
@@ -49,7 +63,7 @@ class TradeModel(Connection):
         if not self._checker_positions(formated_inputs):
             return False
 
-        return True 
+        return True
 
     def _checker_inputs(self, formated_inputs: dict) -> bool:
         start_time, end_time = self.instance_section_time.verify_existence_from_input(
@@ -57,12 +71,12 @@ class TradeModel(Connection):
         )
 
         if start_time == end_time:
-            self.instance_logs.notification(
-                "Start Time {} cannot equals to End Time {}".format(
+            self.order_check_full_comment += (
+                "Start Time {} cannot equals to End Time {}.\n".format(
                     start_time.strftime("%H:%M:%S"), end_time.strftime("%H:%M:%S")
-                ),
-                "t",
+                )
             )
+
             return False
 
         if (
@@ -71,10 +85,7 @@ class TradeModel(Connection):
             or formated_inputs["input_take_profit"] * 0.01
             > formated_inputs["input_deviation_trade"]
         ):
-            self.instance_logs.notification(
-                "The deviation may not be sufficient. If there is too much volatility the order could not be placed.",
-                "t",
-            )
+            self.order_check_full_comment += "The deviation may not be sufficient. If there is too much volatility the order could not be placed.\n"
 
         return True
 
@@ -100,10 +111,14 @@ class TradeModel(Connection):
                 break
 
         self.order_check = order_check._asdict()
-        for k, v in self.order_check.items():
-            if not hasattr(self, f"order_check_{k}"):
-                continue
-            self.__setattr__(f"order_check_{k}", v)
+        order_check_comment_temp = self.order_check["comment"]
+        if order_check_comment_temp == "Done":
+            self.order_check_full_comment += "{} order can be placed.\n".format(
+                formated_inputs["input_order_type"]
+            )
+        else:
+            self.order_check_full_comment += "{}.\n".format(self.order_check["comment"])
+        self.order_check_retcode = self.order_check["retcode"]
 
         self.order_check_request = self.order_check["request"]._asdict()
         for k, v in self.order_check_request.items():
@@ -202,14 +217,14 @@ class TradeModel(Connection):
 
             if order_check.retcode == 0:
                 self.instance_logs.notification(
-                    "Order {} can be placed".format(
+                    "{} order can be placed".format(
                         self.formated_inputs["input_order_type"]
                     ),
                     "t",
                 )
             else:
                 self.instance_logs.notification(
-                    "Order {} cannot be placed. Error:{} {}.".format(
+                    "{} order cannot be placed. Error:{} {}.".format(
                         self.formated_inputs["input_order_type"],
                         order_check.retcode,
                         order_check.comment,
@@ -227,7 +242,7 @@ class TradeModel(Connection):
             # If the trade request was not successful, print an error message
             if order_result.retcode != mt5.TRADE_RETCODE_DONE:
                 self.instance_logs.notification(
-                    "Order {} has [not] ben placed. Error: {} {}.".format(
+                    "{} order has [not] ben placed. Error: {} {}.".format(
                         self.formated_inputs["input_order_type"],
                         order_check.retcode,
                         order_check.comment,
@@ -236,7 +251,7 @@ class TradeModel(Connection):
             else:
                 # If the trade request was successful
                 self.instance_logs.notification(
-                    "Order {} has been placed.".format(
+                    "{} order has been placed.".format(
                         self.formated_inputs["input_order_type"],
                     )
                 )
@@ -283,7 +298,7 @@ class TradeModel(Connection):
     _  _ ____ ___  _ ____ _ ____ ___     ___  ____ ____ ____ ____ ____ ____ ____ ____
     |\/| |  | |  \ | |___ | |___ |  \    |__] |__/ |  | |    |___ [__  [__  |___ [__ 
     |  | |__| |__/ | |    | |___ |__/    |    |  \ |__| |___ |___ ___] ___] |___ ___]
-    """    
+    """
 
     def Init(self):
         """

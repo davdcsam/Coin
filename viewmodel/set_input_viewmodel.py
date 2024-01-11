@@ -35,8 +35,8 @@ class SetInputViewModel(InfoWidgets):
         self.model_connection.observe(view.hide_undeploy, "bot_status")
 
         order_check_items_observed: list[str] = [
+            "order_check_full_comment",
             "order_check_retcode",
-            "order_check_comment",
             "order_check_request_volume",
             "order_check_request_price",
             "order_check_request_tp",
