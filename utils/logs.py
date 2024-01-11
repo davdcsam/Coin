@@ -103,11 +103,18 @@ class Logs:
         threading.Thread(target=self.close_notification, args=(notification,)).start()
 
     def close_notification(self, notification: int | str, delay: float = 5.0):
+        """
+        Close a notification widget after a specified delay.
+
+        Args:
+            notification: The id or label of the notification widget to close.
+            delay: The number of seconds to wait before closing the notification. Default is 5.0.
+        """
+
         time.sleep(delay)
         if dpg.does_item_exist(notification):
             dpg.delete_item(notification)
 
-    # Defining a method to log a message with a specific format type
     def log(self, message: str, f_type: str = "s"):
         """
         Logs a message with a specific format type. This meassege will appear as a dpg.add_text into self._container.
@@ -169,7 +176,7 @@ class Logs:
         Save the current DataFrame (contain all the logs) to a CSV file in self.csv_file_path
         """
         self.df.to_csv(self.csv_file_path, mode="w")
-        print(f"Logs saved into {self.csv_file_path}")
+        self.internal_log(f"Logs saved into {self.csv_file_path}", "n")
 
 
 def verify_singleton():
