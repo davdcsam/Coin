@@ -323,16 +323,20 @@ class Connection(HasTraits):
             self._restore_atributes()
             return
 
-        # _    ____ ____ _ _  _    _  _ ___  ___  ____ ___ ____
-        # |    |  | | __ | |\ |    |  | |__] |  \ |__|  |  |___
-        # |___ |__| |__] | | \|    |__| |    |__/ |  |  |  |___
+        """
+        _    ____ ____ _ _  _    _  _ ___  ___  ____ ___ ____
+        |    |  | | __ | |\ |    |  | |__] |  \ |__|  |  |___
+        |___ |__| |__] | | \|    |__| |    |__/ |  |  |  |___
+        """
 
         for k, v in self.login_info.items():
             self.__setattr__(f"login_info_{k}", v)
 
-        # ___ ____ ____ _  _ _ _  _ ____ _       _  _ ___  ___  ____ ___ ____
-        #  |  |___ |__/ |\/| | |\ | |__| |       |  | |__] |  \ |__|  |  |___
-        #  |  |___ |  \ |  | | | \| |  | |___    |__| |    |__/ |  |  |  |___
+        """
+        ___ ____ ____ _  _ _ _  _ ____ _       _  _ ___  ___  ____ ___ ____
+         |  |___ |__/ |\/| | |\ | |__| |       |  | |__] |  \ |__|  |  |___
+         |  |___ |  \ |  | | | \| |  | |___    |__| |    |__/ |  |  |  |___
+        """
 
         terminal_info_temp = mt5.terminal_info()
         if not terminal_info_temp:
@@ -359,9 +363,11 @@ class Connection(HasTraits):
             self._restore_atributes()
             return
 
-        # ____ ____ ____ ____ _  _ _  _ ___    _  _ ___  ___  ____ ___ ____
-        # |__| |    |    |  | |  | |\ |  |     |  | |__] |  \ |__|  |  |___
-        # |  | |___ |___ |__| |__| | \|  |     |__| |    |__/ |  |  |  |___
+        """
+        ____ ____ ____ ____ _  _ _  _ ___    _  _ ___  ___  ____ ___ ____
+        |__| |    |    |  | |  | |\ |  |     |  | |__] |  \ |__|  |  |___
+        |  | |___ |___ |__| |__| | \|  |     |__| |    |__/ |  |  |  |___
+        """
 
         account_info_temp = mt5.account_info()
         if not account_info_temp:
@@ -386,9 +392,11 @@ class Connection(HasTraits):
             self._restore_atributes()
             return
 
-        # ____ _   _ _  _ ___  ____ _       _  _ ___  ___  ____ ___ ____
-        # [__   \_/  |\/| |__] |  | |       |  | |__] |  \ |__|  |  |___
-        # ___]   |   |  | |__] |__| |___    |__| |    |__/ |  |  |  |___
+        """
+        ____ _   _ _  _ ___  ____ _       _  _ ___  ___  ____ ___ ____
+        [__   \_/  |\/| |__] |  | |       |  | |__] |  \ |__|  |  |___
+        ___]   |   |  | |__] |__| |___    |__| |    |__/ |  |  |  |___
+        """
 
         symbol_info_temp = mt5.symbol_info(self.login_info["input_symbol"]["value"])
         if not symbol_info_temp:
@@ -498,9 +506,11 @@ class Connection(HasTraits):
             time.sleep(self.delay_time)
             return
 
-        # ____ ____ ____ ____ _  _ _  _ ___    _  _ ___  ___  ____ ___ ____
-        # |__| |    |    |  | |  | |\ |  |     |  | |__] |  \ |__|  |  |___
-        # |  | |___ |___ |__| |__| | \|  |     |__| |    |__/ |  |  |  |___
+        """
+        ____ ____ ____ ____ _  _ _  _ ___    _  _ ___  ___  ____ ___ ____
+        |__| |    |    |  | |  | |\ |  |     |  | |__] |  \ |__|  |  |___
+        |  | |___ |___ |__| |__| | \|  |     |__| |    |__/ |  |  |  |___
+        """
 
         account_info_temp = mt5.account_info()
         if not account_info_temp:
@@ -515,9 +525,11 @@ class Connection(HasTraits):
         for k, v in self.account_info.items():
             self.__setattr__(f"account_info_{k}", v)
 
-        # ____ _   _ _  _ ___  ____ _       _  _ ___  ___  ____ ___ ____
-        # [__   \_/  |\/| |__] |  | |       |  | |__] |  \ |__|  |  |___
-        # ___]   |   |  | |__] |__| |___    |__| |    |__/ |  |  |  |___
+        """
+        ____ _   _ _  _ ___  ____ _       _  _ ___  ___  ____ ___ ____
+        [__   \_/  |\/| |__] |  | |       |  | |__] |  \ |__|  |  |___
+        ___]   |   |  | |__] |__| |___    |__| |    |__/ |  |  |  |___
+        """
 
         symbol_info_temp = mt5.symbol_info(self.login_info["input_symbol"]["value"])
         if not symbol_info_temp:
@@ -531,10 +543,11 @@ class Connection(HasTraits):
         for k, v in self.symbol_info.items():
             self.__setattr__(f"symbol_info_{k}", v)
 
-        # ___ _ ____ _  _    _  _ ___  ___  ____ ___ ____
-        #  |  | |    |_/     |  | |__] |  \ |__|  |  |___
-        #  |  | |___ | \_    |__| |    |__/ |  |  |  |___
-
+        """
+        ___ _ ____ _  _    _  _ ___  ___  ____ ___ ____
+         |  | |    |_/     |  | |__] |  \ |__|  |  |___
+         |  | |___ | \_    |__| |    |__/ |  |  |  |___
+        """
         symbol_info_tick_temp = mt5.symbol_info_tick(self.symbol_info["name"])
         if not symbol_info_tick_temp:
             self.instance_logs.notification(
@@ -546,10 +559,12 @@ class Connection(HasTraits):
         self.symbol_info_tick: dict = symbol_info_tick_temp._asdict()
         for k, v in self.symbol_info_tick.items():
             self.__setattr__(f"symbol_info_tick_{k}", v)
-
-        # ____ ___  ____ ____ ____     _  _ ___  ___  ____ ___ ____
-        # |  | |  \ |___ |__/ [__      |  | |__] |  \ |__|  |  |___
-        # |__| |__/ |___ |  \ ___]     |__| |    |__/ |  |  |  |___
+        
+        """
+        ____ ____ ___  ____ ____ ____    _  _ ___  ___  ____ ___ ____
+        |  | |__/ |  \ |___ |__/ [__     |  | |__] |  \ |__|  |  |___
+        |__| |  \ |__/ |___ |  \ ___]    |__| |    |__/ |  |  |  |___
+        """
 
         orders_total_temp = mt5.orders_get(symbol=self.symbol_info["name"])
         if orders_total_temp:
@@ -563,9 +578,11 @@ class Connection(HasTraits):
             )
         self.orders_total: dict[Hashable, Any] = self.df_orders_total.to_dict()
 
-        # ___  ____ ____ _ ___ _ ____ _  _ ____    _  _ ___  ___  ____ ___ ____
-        # |__] |  | [__  |  |  | |  | |\ | [__     |  | |__] |  \ |__|  |  |___
-        # |    |__| ___] |  |  | |__| | \| ___]    |__| |    |__/ |  |  |  |___
+        """
+        ___  ____ ____ _ ___ _ ____ _  _ ____    _  _ ___  ___  ____ ___ ____
+        |__] |  | [__  |  |  | |  | |\ | [__     |  | |__] |  \ |__|  |  |___
+        |    |__| ___] |  |  | |__| | \| ___]    |__| |    |__/ |  |  |  |___
+        """
 
         positions_total_temp = mt5.positions_get(symbol=self.symbol_info["name"])
         if positions_total_temp:
