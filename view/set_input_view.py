@@ -213,7 +213,7 @@ class SetInputView:
 
         # === Build Checker View === #
 
-        self.checker_window: int | str = dpg.add_window(
+        self.checker_result_window: int | str = dpg.add_window(
             label="Checker Result",
             width=400,
             height=300,
@@ -224,72 +224,153 @@ class SetInputView:
         )
 
         dpg.set_item_pos(
-            self.checker_window,
+            self.checker_result_window,
             pos=(
                 (
                     int(dpg.get_viewport_width())
-                    - int(dpg.get_item_width(self.checker_window))
+                    - int(dpg.get_item_width(self.checker_result_window))
                 )
                 / 2,
                 (
                     int(dpg.get_viewport_height())
-                    - int(dpg.get_item_height(self.checker_window))
+                    - int(dpg.get_item_height(self.checker_result_window))
                 )
                 / 2,
             ),
         )
 
-        self.group_checker: int | str = dpg.add_group(
-            width=200, parent=self.checker_window
+        self.group_checker_result: int | str = dpg.add_group(
+            width=200, parent=self.checker_result_window
         )
 
         self.order_check_full_comment: int | str = dpg.add_text(
             label="Comment",
             show_label=True,
-            wrap=dpg.get_item_width(self.checker_window) * 1 / 2,
-            parent=self.group_checker,
+            wrap=dpg.get_item_width(self.checker_result_window) * 1 / 2,
+            parent=self.group_checker_result,
         )
 
         self.order_check_retcode: int | str = dpg.add_text(
             label="Retcode",
             show_label=True,
-            parent=self.group_checker,
+            parent=self.group_checker_result,
         )
 
         self.order_calc_profit: int | str = dpg.add_text(
             label="Simulated Profit",
             show_label=True,
-            parent=self.group_checker,
+            parent=self.group_checker_result,
         )
 
         self.order_calc_loss: int | str = dpg.add_text(
             label="Simulated Loss",
             show_label=True,
-            parent=self.group_checker,
+            parent=self.group_checker_result,
         )
 
         self.order_check_request_volume: int | str = dpg.add_text(
-            label="Volume",
+            label="Simulated Volume",
             show_label=True,
-            parent=self.group_checker,
+            parent=self.group_checker_result,
         )
 
         self.order_check_request_price: int | str = dpg.add_text(
             label="Simulated Price",
             show_label=True,
-            parent=self.group_checker,
+            parent=self.group_checker_result,
         )
 
         self.order_check_request_tp: int | str = dpg.add_text(
             label="Simulated Take Profit",
             show_label=True,
-            parent=self.group_checker,
+            parent=self.group_checker_result,
         )
 
         self.order_check_request_sl: int | str = dpg.add_text(
             label="Simulated Stop Loss",
             show_label=True,
-            parent=self.group_checker,
+            parent=self.group_checker_result,
+        )
+
+        # === Build Trade Result Window === #
+
+        self.trade_result_window: int | str = dpg.add_window(
+            label="Trade Result",
+            width=400,
+            height=300,
+            no_collapse=True,
+            no_resize=True,
+            no_saved_settings=True,
+            show=False,
+        )
+
+        dpg.set_item_pos(
+            self.trade_result_window,
+            pos=(
+                (
+                    int(dpg.get_viewport_width())
+                    - int(dpg.get_item_width(self.trade_result_window))
+                )
+                / 2,
+                (
+                    int(dpg.get_viewport_height())
+                    - int(dpg.get_item_height(self.trade_result_window))
+                )
+                / 2,
+            ),
+        )
+
+        self.group_trade_result: int | str = dpg.add_group(
+            width=200, parent=self.trade_result_window
+        )
+
+        self.order_result_full_comment: int | str = dpg.add_text(
+            label="Comment",
+            show_label=True,
+            wrap=dpg.get_item_width(self.trade_result_window) * 1 / 2,
+            parent=self.group_trade_result,
+        )
+
+        self.order_result_retcode: int | str = dpg.add_text(
+            label="Retcode",
+            show_label=True,
+            parent=self.group_trade_result,
+        )
+
+        self.order_result_calc_profit: int | str = dpg.add_text(
+            label="Expected Profit",
+            show_label=True,
+            parent=self.group_trade_result,
+        )
+
+        self.order_result_calc_loss: int | str = dpg.add_text(
+            label="Expected Loss",
+            show_label=True,
+            parent=self.group_trade_result,
+        )
+
+        self.order_result_request_volume: int | str = dpg.add_text(
+            label="Volume",
+            show_label=True,
+            parent=self.group_trade_result,
+        )
+
+        self.order_result_request_price: int | str = dpg.add_text(
+            label="Open Price",
+            show_label=True,
+            parent=self.group_trade_result,
+        )
+
+        self.order_result_request_tp: int | str = dpg.add_text(
+            label="Take Profit",
+            show_label=True,
+            parent=self.group_trade_result,
+        )
+
+        self.order_result_request_sl: int | str = dpg.add_text(
+            label="Stop Loss",
+            show_label=True,
+            parent=self.group_trade_result,
         )
 
         self.viewmodel.bind_inputs(self)
@@ -300,16 +381,16 @@ class SetInputView:
 
     def callback_switch_view(self, change):
         if change["new"] == "sign_out":
-            dpg.hide_item(self.checker_window)
+            dpg.hide_item(self.checker_result_window)
         if change["new"] == "sign_in":
             dpg.show_item(self.button_checker)
             dpg.hide_item(self.button_deploy)
             dpg.hide_item(self.button_undeploy)
-            dpg.hide_item(self.checker_window)
+            dpg.hide_item(self.checker_result_window)
         if change["old"] == "sign_out" and change["new"] == "loby":
             button_deploy_confi: dict = dpg.get_item_configuration(self.button_deploy)
             if button_deploy_confi["show"] is True:
-                dpg.show_item(self.checker_window)
+                dpg.show_item(self.checker_result_window)
 
     def show_checker(self, sender, app_data):
         dpg.hide_item(self.button_deploy)
@@ -424,7 +505,7 @@ class SetInputView:
 
     def deploy(self, sender, app_data):
         dpg.show_item(self.button_undeploy)
-        dpg.hide_item(self.checker_window)
+        dpg.hide_item(self.checker_result_window)
         dpg.hide_item(self.button_deploy)
         self.viewmodel.change_bot_state(True)
 
@@ -440,13 +521,13 @@ class SetInputView:
 
     def checker(self, sender, app_data):
         if self.viewmodel.checker():
-            dpg.hide_item(self.button_checker)
             dpg.show_item(self.button_deploy)
+            dpg.hide_item(self.button_checker)
             dpg.hide_item(self.button_undeploy)
             self.viewmodel.change_bot_state(False)
             self.save_last_inputs()
 
-        dpg.show_item(self.checker_window)
+        dpg.show_item(self.checker_result_window)
 
     def delay_time_connection(self, sender, app_data):
         self.viewmodel.change_delay_time(app_data)

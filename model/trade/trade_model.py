@@ -42,18 +42,7 @@ class TradeModel(Connection):
     """
 
     def checker(self, inputs: dict) -> bool:
-        self.order_check = None
-        self.order_check_retcode = None
         self.order_check_full_comment = ""
-
-        self.order_check_request = None
-        self.order_check_request_volume = None
-        self.order_check_request_price = None
-        self.order_check_request_tp = None
-        self.order_check_request_sl = None
-
-        self.order_calc_profit = None
-        self.order_calc_loss = None
 
         formated_inputs: dict[str, Any] = ManagerFiles.get_data_formated(inputs)
 
@@ -213,29 +202,6 @@ class TradeModel(Connection):
                 self.formated_inputs["input_deviation_trade"],
             )
 
-            order_check = mt5.order_check(request)
-
-            if order_check.retcode == 0:
-                self.instance_logs.notification(
-                    "{} order can be placed".format(
-                        self.formated_inputs["input_order_type"]
-                    ),
-                    "t",
-                )
-            else:
-                self.instance_logs.notification(
-                    "{} order cannot be placed. Error:{} {}.".format(
-                        self.formated_inputs["input_order_type"],
-                        order_check.retcode,
-                        order_check.comment,
-                    ),
-                    "t",
-                )
-
-                self.instance_logs.notification("Bot'll will shutdown.")
-                self.deinit_flag = True
-                self.bot_status = False
-
             # Send the trade request
             order_result = mt5.order_send(request)
 
@@ -244,8 +210,8 @@ class TradeModel(Connection):
                 self.instance_logs.notification(
                     "{} order has [not] ben placed. Error: {} {}.".format(
                         self.formated_inputs["input_order_type"],
-                        order_check.retcode,
-                        order_check.comment,
+                        order_result.retcode,
+                        order_result.comment,
                     )
                 )
             else:
