@@ -10,6 +10,14 @@ from utils.logs import Logs
 
 
 class SwitchView(HasTraits):
+    """
+    This class is a Singleton that manages different views.
+
+    Attributes:
+        _instance (SwitchView): The single instance of the class.
+        current_view (Any): The current view.
+    """
+
     _instance = None
     current_view = Any()
 
@@ -29,11 +37,20 @@ class SwitchView(HasTraits):
 
     @staticmethod
     def getInstance():
+        """
+        Returns the single instance of the class. If it doesn't exist, it creates one.
+
+        Returns:
+            SwitchView: The single instance of the class.
+        """
         if SwitchView._instance is None:
             SwitchView()
         return SwitchView._instance
 
     def __init__(self):
+        """
+        The constructor for the SwitchView class. It raises an exception if an instance already exists.
+        """
         if SwitchView._instance is not None:
             raise Exception(
                 """
@@ -53,6 +70,16 @@ class SwitchView(HasTraits):
         to_unset_primary: int | str = None,
         to_set_primary: int | str = None,
     ):
+        """
+        Sets a page with the given parameters.
+
+        Args:
+            name (str): The name of the page.
+            to_hide (tuple[int | str] | list[int | str]): The items to hide.
+            to_show (tuple[int | str] | list[int | str]): The items to show.
+            to_unset_primary (int | str, optional): The primary item to unset. Defaults to None.
+            to_set_primary (int | str, optional): The primary item to set. Defaults to None.
+        """
         self.__dict__[name] = self.AutoDict(
             {
                 "to_hide": to_hide,
@@ -63,6 +90,15 @@ class SwitchView(HasTraits):
         )
 
     def switch(self, name: str):
+        """
+        Switches to the given page.
+
+        Args:
+            name (str): The name of the page to switch to.
+
+        Raises:
+            Exception: If the page does not exist.
+        """
         if not hasattr(self, name):
             raise Exception(
                 f"""
@@ -72,7 +108,7 @@ class SwitchView(HasTraits):
             )
 
         if self.current_view == name:
-            print(f"You are already watching '{name}'")
+            self.instance_logs.log(f"You are already watching '{name}'", "s")
             return
 
         for hide in self.__dict__[name]["to_hide"]:
@@ -91,9 +127,15 @@ class SwitchView(HasTraits):
 
         self.current_view = name
 
-        self.instance_logs.log(f"Switched to {self.current_view}")
+        self.instance_logs.log(f"Switched to {self.current_view}", "s")
 
-    def get_pages(self):
+    def get_pages(self) -> dict:
+        """
+        Returns the pages.
+
+        Returns:
+            dict: The pages.
+        """
         pages: dict = {}
         for attr_name, attr_value in vars(self).items():
             if attr_name.startswith("_"):
