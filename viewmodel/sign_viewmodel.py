@@ -10,6 +10,7 @@ from model.trade.trade_model import TradeModel
 from model.sign_model import SignModel
 
 from utils.info_widgets import InfoWidgets
+from utils.logs import Logs
 from utils.switch_view import SwitchView
 
 class SignViewModel(InfoWidgets):
@@ -18,6 +19,7 @@ class SignViewModel(InfoWidgets):
         self.model_connection: TradeModel = model_connection
         self.model: SignModel = model
         self.instance_switch_view: SwitchView = SwitchView.getInstance()
+        self.instance_logs: Logs = Logs.getInstance()
         self.view = None
 
     def bind(self, view):
@@ -48,15 +50,15 @@ class SignViewModel(InfoWidgets):
             if self.model.save_inputs_file(
                 self.get_inputs(self.view), os.path.basename(os.getcwd())
             ):
-                print("Save Inputs Successfully")
+                self.instance_logs.log("Save Inputs Successfully")
         except Exception as e:
-            print(e)
+            self.instance_logs.internal_log(e, "e")
             pass
 
     def save_last_input(self):
         try:
             if self.model.save_inputs_last_file(self.get_inputs(self.view)):
-                print("Save Last Inputs Successfully")
+                self.instance_logs.log("Save Last Inputs Successfully")
         except Exception as e:
-            print(e)
+            self.instance_logs.internal_log(e, "e")
             pass

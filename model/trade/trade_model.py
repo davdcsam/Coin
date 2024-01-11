@@ -15,6 +15,7 @@ from model.trade.section_time import SectionTimeModule
 from model.trade.no_position import NoPositionModule
 
 from utils.manager_files import ManagerFiles
+from utils.logs import Logs
 
 
 class TradeModel(Connection):
@@ -43,6 +44,7 @@ class TradeModel(Connection):
         super().__init__()
         self.instance_section_time = SectionTimeModule()
         self.instance_no_position = NoPositionModule()
+        self.instance_logs: Logs = Logs.getInstance()
 
     """
     ____ _  _ ____ ____ _  _ ____ ____
@@ -304,7 +306,7 @@ class TradeModel(Connection):
             self.formated_inputs, self.symbol_info_tick_time
         )
 
-        print(
+        self.instance_logs.internal_log(
             "InitIteration:{} - Section Time {} - No Positions {}".format(
                 datetime.utcfromtimestamp(
                     self.symbol_info_tick_time_msc / 1000.0
@@ -313,7 +315,7 @@ class TradeModel(Connection):
                 self.instance_no_position.Any(
                     self.formated_inputs, self.df_positions_total
                 ),
-            )
+            ), "t"
         )
 
     def Any(self):
@@ -324,7 +326,7 @@ class TradeModel(Connection):
         """
         self._operation()
 
-        print(
+        self.instance_logs.internal_log(
             "AnyInteration: {} - Section Time {} - No Positions {}".format(
                 datetime.utcfromtimestamp(
                     self.symbol_info_tick_time_msc / 1000.0
@@ -333,7 +335,8 @@ class TradeModel(Connection):
                 self.instance_no_position.Any(
                     self.formated_inputs, self.df_positions_total
                 ),
-            )
+            ),
+            "t",
         )
 
     def DeInit(self):
@@ -341,10 +344,11 @@ class TradeModel(Connection):
         This method is called when the trading thread is deinitialized.
         """
 
-        print(
+        self.instance_logs.internal_log(
             "DeinitIteration {}".format(
                 datetime.utcfromtimestamp(
                     self.symbol_info_tick_time_msc / 1000.0
                 ).strftime("%H:%M:%S.%f")[:-3]
-            )
+            ),
+            "t",
         )

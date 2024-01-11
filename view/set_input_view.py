@@ -10,6 +10,7 @@ import dearpygui.dearpygui as dpg
 # Owner Modules
 from utils.fonts import Fonts
 from utils.formater import Formater
+from utils.logs import Logs
 from utils.switch_view import SwitchView
 from utils.themes import Themes
 
@@ -23,6 +24,7 @@ class SetInputView:
         # === Utils === #
 
         self.instance_fonts = Fonts()
+        self.instance_logs: Logs = Logs.getInstance()
         self.instance_switch_view: SwitchView = SwitchView.getInstance()
         self.instance_themes = Themes()
 
@@ -395,16 +397,16 @@ class SetInputView:
     def load_inputs(self, sender, app_data):
         inputs: dict[str, Any] | Literal[False] = self.viewmodel.load_inputs()
         if self.set_inputs(inputs):
-            print("Load Inputs Successfully")
+            self.instance_logs.log("Load Inputs Successfully")
         else:
-            print("Inputs File is Empty")
+            self.instance_logs.log("Inputs File is Empty")
 
     def load_last_inputs(self):
         inputs: dict[str, Any] | Literal[False] = self.viewmodel.load_last_input()
         if self.set_inputs(inputs):
-            print("Load Last Inputs Successfully")
+            self.instance_logs.log("Load Last Inputs Successfully")
         else:
-            print("Inputs File is Empty")
+            self.instance_logs.log("Inputs File is Empty")
 
     def set_inputs(self, inputs: dict[str, Any]) -> bool:
         if not inputs:

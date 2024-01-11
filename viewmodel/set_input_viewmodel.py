@@ -7,6 +7,7 @@ from connection.connection import Connection
 
 # Owner Modules
 from model.set_input_model import SetInputModel
+from utils.logs import Logs
 from utils.info_widgets import InfoWidgets
 from utils.switch_view import SwitchView
 
@@ -19,6 +20,7 @@ class SetInputViewModel(InfoWidgets):
 
         # ··· Atr Class ··· #
         InfoWidgets.__init__(self)
+        self.instance_logs: Logs = Logs.getInstance()
         self.instance_switch_view: SwitchView = SwitchView.getInstance()
         self.view = None
 
@@ -73,17 +75,17 @@ class SetInputViewModel(InfoWidgets):
             if self.model.save_inputs_file(
                 self.get_inputs(self.view), os.path.basename(os.getcwd()) + "Input"
             ):
-                print("Save Set Inputs Successfully")
+                self.instance_logs.log("Save Set Inputs Successfully")
         except Exception as e:
-            print(e)
+            self.instance_logs.internal_log(e, "e")
             pass
 
     def save_last_input(self):
         try:
             if self.model.save_inputs_last_file(self.get_inputs(self.view)):
-                print("Save Last Set Inputs Successfully")
+                self.instance_logs.log("Save Last Set Inputs Successfully")
         except Exception as e:
-            print(e)
+            self.instance_logs.internal_log(e, "e")
             pass
 
     def change_bot_state(self, status: bool) -> None:
