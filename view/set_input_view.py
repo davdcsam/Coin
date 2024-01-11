@@ -256,13 +256,13 @@ class SetInputView:
             parent=self.group_checker_result,
         )
 
-        self.order_calc_profit: int | str = dpg.add_text(
+        self.order_check_calc_profit: int | str = dpg.add_text(
             label="Simulated Profit",
             show_label=True,
             parent=self.group_checker_result,
         )
 
-        self.order_calc_loss: int | str = dpg.add_text(
+        self.order_check_calc_loss: int | str = dpg.add_text(
             label="Simulated Loss",
             show_label=True,
             parent=self.group_checker_result,
@@ -331,12 +331,6 @@ class SetInputView:
             parent=self.group_trade_result,
         )
 
-        self.order_result_retcode: int | str = dpg.add_text(
-            label="Retcode",
-            show_label=True,
-            parent=self.group_trade_result,
-        )
-
         self.order_result_calc_profit: int | str = dpg.add_text(
             label="Expected Profit",
             show_label=True,
@@ -382,11 +376,13 @@ class SetInputView:
     def callback_switch_view(self, change):
         if change["new"] == "sign_out":
             dpg.hide_item(self.checker_result_window)
+            dpg.hide_item(self.trade_result_window)
         if change["new"] == "sign_in":
             dpg.show_item(self.button_checker)
             dpg.hide_item(self.button_deploy)
             dpg.hide_item(self.button_undeploy)
             dpg.hide_item(self.checker_result_window)
+            dpg.hide_item(self.trade_result_window)
         if change["old"] == "sign_out" and change["new"] == "loby":
             button_deploy_confi: dict = dpg.get_item_configuration(self.button_deploy)
             if button_deploy_confi["show"] is True:
@@ -435,8 +431,8 @@ class SetInputView:
             "order_check_request_price",
             "order_check_request_tp",
             "order_check_request_sl",
-            "order_calc_profit",
-            "order_calc_loss",
+            "order_check_calc_profit",
+            "order_check_calc_loss",
         ]
         for item in items:
             if (
@@ -444,13 +440,6 @@ class SetInputView:
                 and hasattr(self, change["name"])
                 and dpg.does_item_exist(self.__getattribute__(change["name"]))
             ):
-                if item == "order_check_full_comment":
-                    dpg.set_value(
-                        self.__getattribute__(item),
-                        change["new"],
-                    )
-                    continue
-
                 if item in [
                     "order_check_request_price",
                     "order_check_request_tp",
@@ -468,7 +457,55 @@ class SetInputView:
                     )
                     continue
 
-                if item in ["order_calc_profit", "order_calc_loss"]:
+                if item in ["order_check_calc_profit", "order_check_calc_loss"]:
+                    dpg.set_value(
+                        self.__getattribute__(change["name"]),
+                        "{} {:,.2f}".format(
+                            self.viewmodel.model_connection.account_info["currency"],
+                            float(change["new"]),
+                        ),
+                    )
+                    continue
+
+                dpg.set_value(
+                    self.__getattribute__(item),
+                    change["new"],
+                )
+
+    def update_result_items(self, change):
+        items: list[str] = [
+            "order_result_full_comment",
+            "order_result_request_volume",
+            "order_result_request_price",
+            "order_result_request_tp",
+            "order_result_request_sl",
+            "order_result_calc_profit",
+            "order_result_calc_loss",
+        ]
+        for item in items:
+            if (
+                item in change["name"]
+                and hasattr(self, change["name"])
+                and dpg.does_item_exist(self.__getattribute__(change["name"]))
+            ):
+                if item in [
+                    "order_result_request_price",
+                    "order_result_request_tp",
+                    "order_result_request_sl",
+                ]:
+                    dpg.set_value(
+                        self.__getattribute__(change["name"]),
+                        str(
+                            "{:,."
+                            + str(self.viewmodel.model_connection.symbol_info_digits)
+                            + "f}"
+                        ).format(
+                            float(change["new"]),
+                        ),
+                    )
+                    continue
+
+                if item in ["order_result_calc_profit", "order_result_calc_loss"]:
                     dpg.set_value(
                         self.__getattribute__(change["name"]),
                         "{} {:,.2f}".format(
@@ -513,10 +550,12 @@ class SetInputView:
         dpg.show_item(self.button_checker)
         dpg.hide_item(self.button_undeploy)
         self.viewmodel.change_bot_state(False)
+        dpg.hide_item(self.trade_result_window)
 
     def hide_undeploy(self, change):
         if change["new"] is False:
             dpg.show_item(self.button_checker)
+            dpg.show_item(self.trade_result_window)
             dpg.hide_item(self.button_undeploy)
 
     def checker(self, sender, app_data):
@@ -528,6 +567,7 @@ class SetInputView:
             self.save_last_inputs()
 
         dpg.show_item(self.checker_result_window)
+        dpg.hide_item(self.trade_result_window)
 
     def delay_time_connection(self, sender, app_data):
         self.viewmodel.change_delay_time(app_data)

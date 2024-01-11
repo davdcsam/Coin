@@ -1,6 +1,7 @@
 # Standard Libraries
 from datetime import datetime
 from pprint import pprint
+from re import T
 
 
 # Third Party Libraries
@@ -20,15 +21,23 @@ class TradeModel(Connection):
     order_check = Any()
     order_check_retcode = Any()
     order_check_full_comment = Unicode()
-
     order_check_request = Any()
     order_check_request_volume = Any()
     order_check_request_price = Any()
     order_check_request_tp = Any()
     order_check_request_sl = Any()
+    order_check_calc_profit = Any()
+    order_check_calc_loss = Any()
 
-    order_calc_profit = Any()
-    order_calc_loss = Any()
+    order_result = Any()
+    order_result_full_comment = Unicode()
+    order_result_request = Any()
+    order_result_request_volume = Any()
+    order_result_request_price = Any()
+    order_result_request_tp = Any()
+    order_result_request_sl = Any()
+    order_result_calc_profit = Any()
+    order_result_calc_loss = Any()
 
     def __init__(self) -> None:
         super().__init__()
@@ -116,14 +125,14 @@ class TradeModel(Connection):
             self.__setattr__(f"order_check_request_{k}", v)
 
         if order_check.retcode == 0:
-            self.order_calc_profit = mt5.order_calc_profit(
+            self.order_check_calc_profit = mt5.order_calc_profit(
                 self.order_types_dict[formated_inputs["input_order_type"]],
                 self.order_check_request["symbol"],
                 self.order_check_request["volume"],
                 self.order_check_request["price"],
                 self.order_check_request["tp"],
             )
-            self.order_calc_loss = mt5.order_calc_profit(
+            self.order_check_calc_loss = mt5.order_calc_profit(
                 self.order_types_dict[formated_inputs["input_order_type"]],
                 self.order_check_request["symbol"],
                 self.order_check_request["volume"],
@@ -132,8 +141,8 @@ class TradeModel(Connection):
             )
             return True
         else:
-            self.order_calc_profit = 0
-            self.order_calc_loss = 0
+            self.order_check_calc_profit = 0
+            self.order_check_calc_loss = 0
             return False
 
     def _checker_build_request(
@@ -194,31 +203,51 @@ class TradeModel(Connection):
         ) and self.instance_no_position.Any(
             self.formated_inputs, self.df_positions_total
         ):
-            request = self._operation_build_request(
-                self.formated_inputs["input_lot_size"],
-                self.order_types_dict[self.formated_inputs["input_order_type"]],
-                self.formated_inputs["input_take_profit"],
-                self.formated_inputs["input_stop_loss"],
-                self.formated_inputs["input_deviation_trade"],
-            )
+            self.order_result_full_comment = ""
 
             # Send the trade request
-            order_result = mt5.order_send(request)
+            self.order_result = mt5.order_send(
+                self._operation_build_request(
+                    self.formated_inputs["input_lot_size"],
+                    self.order_types_dict[self.formated_inputs["input_order_type"]],
+                    self.formated_inputs["input_take_profit"],
+                    self.formated_inputs["input_stop_loss"],
+                    self.formated_inputs["input_deviation_trade"],
+                )
+            )._asdict()
 
-            # If the trade request was not successful, print an error message
-            if order_result.retcode != mt5.TRADE_RETCODE_DONE:
-                self.instance_logs.notification(
-                    "{} order has [not] ben placed. Error: {} {}.".format(
-                        self.formated_inputs["input_order_type"],
-                        order_result.retcode,
-                        order_result.comment,
-                    )
+            self.order_result_request = self.order_result["request"]._asdict()
+            for k, v in self.order_result_request.items():
+                if not hasattr(self, f"order_result_request_{k}"):
+                    continue
+                self.__setattr__(f"order_result_request_{k}", v)
+
+            # If the trade request was not successful, show an error message
+            if self.order_result["retcode"] == mt5.TRADE_RETCODE_DONE:
+                self.order_result_full_comment += "{} order has been placed.".format(
+                    self.formated_inputs["input_order_type"],
+                )
+
+                self.order_result_calc_profit = mt5.order_calc_profit(
+                    self.order_types_dict[self.formated_inputs["input_order_type"]],
+                    self.order_result_request["symbol"],
+                    self.order_result_request["volume"],
+                    self.order_result_request["price"],
+                    self.order_result_request["tp"],
+                )
+                self.order_result_calc_loss = mt5.order_calc_profit(
+                    self.order_types_dict[self.formated_inputs["input_order_type"]],
+                    self.order_result_request["symbol"],
+                    self.order_result_request["volume"],
+                    self.order_result_request["price"],
+                    self.order_result_request["sl"],
                 )
             else:
-                # If the trade request was successful
-                self.instance_logs.notification(
-                    "{} order has been placed.".format(
+                self.order_result_full_comment = (
+                    "{} order has [not] ben placed. Error: {} {}.".format(
                         self.formated_inputs["input_order_type"],
+                        self.order_result["retcode"],
+                        self.order_result["comment"],
                     )
                 )
 

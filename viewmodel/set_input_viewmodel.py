@@ -24,28 +24,41 @@ class SetInputViewModel(InfoWidgets):
 
     def bind_inputs(self, view):
         self.view = view
-        items_observed: list[str] = [
+
+        # Items to view.format_items
+        for item_observed in [
             "symbol_info_volume_min",
             "symbol_info_volume_max",
             "symbol_info_volume_step",
-        ]
-        for item_observed in items_observed:
+        ]:
             self.model_connection.observe(view.format_items, item_observed)
 
-        self.model_connection.observe(view.hide_undeploy, "bot_status")
-
-        order_check_items_observed: list[str] = [
+        # Items to view.update_checker_items
+        for item_observed in [
             "order_check_full_comment",
             "order_check_retcode",
             "order_check_request_volume",
             "order_check_request_price",
             "order_check_request_tp",
             "order_check_request_sl",
-            "order_calc_profit",
-            "order_calc_loss",
-        ]
-        for item_observed in order_check_items_observed:
+            "order_check_calc_profit",
+            "order_check_calc_loss",
+        ]:
             self.model_connection.observe(view.update_checker_items, item_observed)
+
+        # Items to view.update_result_items
+        for item_observed in [
+            "order_result_full_comment",
+            "order_result_request_volume",
+            "order_result_request_price",
+            "order_result_request_tp",
+            "order_result_request_sl",
+            "order_result_calc_profit",
+            "order_result_calc_loss",
+        ]:
+            self.model_connection.observe(view.update_result_items, item_observed)
+
+        self.model_connection.observe(view.hide_undeploy, "bot_status")
 
         self.instance_switch_view.observe(view.callback_switch_view, "current_view")
 
