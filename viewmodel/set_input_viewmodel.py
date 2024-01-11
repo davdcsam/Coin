@@ -77,7 +77,7 @@ class SetInputViewModel(InfoWidgets):
             ):
                 self.instance_logs.log("Save Set Inputs Successfully")
         except Exception as e:
-            self.instance_logs.internal_log(e, "e")
+            self.instance_logs.internal_log(str(e), "e")
             pass
 
     def save_last_input(self):
@@ -85,7 +85,7 @@ class SetInputViewModel(InfoWidgets):
             if self.model.save_inputs_last_file(self.get_inputs(self.view)):
                 self.instance_logs.log("Save Last Set Inputs Successfully")
         except Exception as e:
-            self.instance_logs.internal_log(e, "e")
+            self.instance_logs.internal_log(str(e), "e")
             pass
 
     def change_bot_state(self, status: bool) -> None:

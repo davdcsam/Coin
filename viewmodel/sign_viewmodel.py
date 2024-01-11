@@ -52,7 +52,7 @@ class SignViewModel(InfoWidgets):
             ):
                 self.instance_logs.log("Save Inputs Successfully")
         except Exception as e:
-            self.instance_logs.internal_log(e, "e")
+            self.instance_logs.internal_log(str(e), "e")
             pass
 
     def save_last_input(self):
@@ -60,5 +60,5 @@ class SignViewModel(InfoWidgets):
             if self.model.save_inputs_last_file(self.get_inputs(self.view)):
                 self.instance_logs.log("Save Last Inputs Successfully")
         except Exception as e:
-            self.instance_logs.internal_log(e, "e")
+            self.instance_logs.internal_log(str(e), "e")
             pass
