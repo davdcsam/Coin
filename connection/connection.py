@@ -282,6 +282,13 @@ class Connection(HasTraits):
             self.instance_logs.notification("Login Inputs are Nulls", "e")
             return False
 
+        # Verify Connection to Intenet
+        try:
+            requests.get("http://www.google.com", timeout=3)
+        except (requests.ConnectionError, requests.Timeout):
+            self.instance_logs.notification("No connection to internet.", "w")
+            return False
+
         self.login_info: dict = login_info
 
         # Set the value to false to prevent issue send operation
@@ -305,13 +312,21 @@ class Connection(HasTraits):
             return
 
         # Try to initialize the MetaTrader 5 terminal
-        if not mt5.initialize(
+        if mt5.initialize(
             path=self.login_info["input_path"]["value"],
             login=int(self.login_info["input_user"]["value"]),
             password=self.login_info["input_password"]["value"],
             server=self.login_info["input_server"]["value"],
             timeout=3000,
         ):
+            self.instance_logs.internal_log(
+                "Account {} in {} logged.".format(
+                    self.login_info["input_user"]["value"],
+                    self.login_info["input_server"]["value"],
+                ),
+                "s",
+            )
+        else:
             self.instance_logs.notification(
                 "Account {} in {} not logged. {}".format(
                     self.login_info["input_user"]["value"],
@@ -328,8 +343,9 @@ class Connection(HasTraits):
         |    |  | | __ | |\ |    |  | |__] |  \ |__|  |  |___
         |___ |__| |__] | | \|    |__| |    |__/ |  |  |  |___
         """
-
         for k, v in self.login_info.items():
+            if not hasattr(self, f"login_info_{k}"):
+                continue
             self.__setattr__(f"login_info_{k}", v)
 
         """
@@ -347,6 +363,8 @@ class Connection(HasTraits):
             return
         self.terminal_info: dict = terminal_info_temp._asdict()
         for k, v in self.terminal_info.items():
+            if not hasattr(self, f"terminal_info_{k}"):
+                continue
             self.__setattr__(f"terminal_info_{k}", v)
 
         # === Terminal Flags === #
@@ -378,6 +396,8 @@ class Connection(HasTraits):
             return
         self.account_info: dict = account_info_temp._asdict()
         for k, v in self.account_info.items():
+            if not hasattr(self, f"account_info_{k}"):
+                continue
             self.__setattr__(f"account_info_{k}", v)
 
         # === Account Flags === #
@@ -410,6 +430,8 @@ class Connection(HasTraits):
             return
         self.symbol_info: dict = symbol_info_temp._asdict()
         for k, v in self.symbol_info.items():
+            if not hasattr(self, f"symbol_info_{k}"):
+                continue
             self.__setattr__(f"symbol_info_{k}", v)
 
         # === Symbol Flags === #
@@ -431,7 +453,9 @@ class Connection(HasTraits):
         # Start Connetion Process
         self.instance_switch_view.switch("loby")
 
-        print("Connected to {} Terminal".format(self.terminal_info["name"]))
+        self.instance_logs.log(
+            "Connected to {} Terminal".format(self.terminal_info["name"]), "s"
+        )
 
         # Call Main Loop
         while self.running:
@@ -521,6 +545,8 @@ class Connection(HasTraits):
 
         self.account_info: dict = account_info_temp._asdict()
         for k, v in self.account_info.items():
+            if not hasattr(self, f"account_info_{k}"):
+                continue
             self.__setattr__(f"account_info_{k}", v)
 
         """
@@ -539,6 +565,8 @@ class Connection(HasTraits):
             return
         self.symbol_info: dict = symbol_info_temp._asdict()
         for k, v in self.symbol_info.items():
+            if not hasattr(self, f"symbol_info_{k}"):
+                continue
             self.__setattr__(f"symbol_info_{k}", v)
 
         """
@@ -556,6 +584,8 @@ class Connection(HasTraits):
             return
         self.symbol_info_tick: dict = symbol_info_tick_temp._asdict()
         for k, v in self.symbol_info_tick.items():
+            if not hasattr(self, f"symbol_info_tick_{k}"):
+                continue
             self.__setattr__(f"symbol_info_tick_{k}", v)
 
         """
