@@ -104,7 +104,8 @@ class Logs:
 
     def close_notification(self, notification: int | str, delay: float = 5.0):
         time.sleep(delay)
-        dpg.delete_item(notification)
+        if dpg.does_item_exist(notification):
+            dpg.delete_item(notification)
 
     # Defining a method to log a message with a specific format type
     def log(self, message: str, f_type: str = "s"):
@@ -169,6 +170,7 @@ class Logs:
         """
         self.df.to_csv(self.csv_file_path, mode="w")
         print(f"Logs saved into {self.csv_file_path}")
+
 
 def verify_singleton():
     temp: Logs = Logs.getInstance()
