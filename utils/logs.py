@@ -36,11 +36,12 @@ class Logs:
             self.df = pd.DataFrame(columns=["datetime", "type", "message"])
             # Defining a dictionary to map format types to their respective string representations
             self.format_type: dict[str, str] = {
-                "w": "[WARNING]",
+                "c": "[CHECKER]",
                 "e": "[ERROR]",
-                "t": "[TRADE]",
                 "n": "[NOTE]",
                 "s": "[SYSTEM]",
+                "t": "[TRADE]",
+                "w": "[WARNING]",
             }
             # Constructing the file path for the output CSV file
             self.csv_file_path: str = os.getcwd() + "\\data\\logs\\logs-{}.csv".format(
@@ -57,60 +58,18 @@ class Logs:
     def set_container(cls, container: int | str):
         cls._container: int | str = container
 
-    # Defining a method to log a message with a specific format type
-    def log(self, message: str, f_type: str = "s"):
-        """
-        Logs a message with a specific format type.
-
-        Args:
-            f_type (str): The format type of the message.
-                'w': [WARNING]
-                'e': [ERROR]
-                't': [TRADE]
-                'n': [NOTE]
-                's': [SYSTEM]
-            message (str): The message to log.
-        """
-        # Creating a new row with the current datetime, format type, and message
-        new_row: dict[str, str] = {
-            "datetime": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "type": self.format_type[f_type],
-            "message": message,
-        }
-
-        # Adding the new row to the DataFrame
-        insert_loc: Any = self.df.index.max()
-
-        if pd.isna(insert_loc):
-            self.df.loc[0] = new_row
-        else:
-            self.df.loc[insert_loc + 1] = new_row
-
-        # Adding a new text widget for each message
-        dpg.add_text(
-            f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} {self.format_type[f_type]} {message}",
-            parent=self._container,
-            wrap=dpg.get_item_width(self._container),
-        )
-
-        # Print the message
-        print(f"{self.format_type[f_type]} {message}")
-
-    def save_csv_when_stop(self):
-        # Saving the DataFrame to a CSV file
-        self.df.to_csv(self.csv_file_path, mode="w")
-
     def notification(self, message: str, f_type: str = "s"):
         """
-        Logs a message with a specific format type.
+        Notification popup.
 
         Args:
             f_type (str): The format type of the message.
-                'w': [WARNING]
-                'e': [ERROR]
-                't': [TRADE]
-                'n': [NOTE]
-                's': [SYSTEM]
+                "c": "[CHECKER]"
+                "e": "[ERROR]"
+                "n": "[NOTE]"
+                "s": "[SYSTEM]"
+                "t": "[TRADE]"
+                "w": "[WARNING]"
             message (str): The message to log.
         """
         notification: int | str = dpg.add_window(
@@ -143,10 +102,73 @@ class Logs:
 
         threading.Thread(target=self.close_notification, args=(notification,)).start()
 
-    def close_notification(self, notification):
-        time.sleep(5)
+    def close_notification(self, notification: int | str, delay: float = 5.0):
+        time.sleep(delay)
         dpg.delete_item(notification)
 
+    # Defining a method to log a message with a specific format type
+    def log(self, message: str, f_type: str = "s"):
+        """
+        Logs a message with a specific format type. This meassege will appear as a dpg.add_text into self._container.
+
+        Args:
+            f_type (str): The format type of the message.
+                "c": "[CHECKER]"
+                "e": "[ERROR]"
+                "n": "[NOTE]"
+                "s": "[SYSTEM]"
+                "t": "[TRADE]"
+                "w": "[WARNING]"
+            message (str): The message to log.
+        """
+        # Save into current csv
+        self.internal_log(message, f_type)
+
+        # Adding a new text widget for each message
+        dpg.add_text(
+            f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} {self.format_type[f_type]} {message}",
+            parent=self._container,
+            wrap=dpg.get_item_width(self._container),
+        )
+
+    def internal_log(self, message: str, f_type: str = "s"):
+        """
+        Logs a message with a specific format type.
+
+        Args:
+            f_type (str): The format type of the message.
+                "c": "[CHECKER]"
+                "e": "[ERROR]"
+                "n": "[NOTE]"
+                "s": "[SYSTEM]"
+                "t": "[TRADE]"
+                "w": "[WARNING]"
+            message (str): The message to log.
+        """
+        # Creating a new row with the current datetime, format type, and message
+        new_row: dict[str, str] = {
+            "datetime": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "type": self.format_type[f_type],
+            "message": message,
+        }
+
+        # Adding the new row to the DataFrame
+        insert_loc: Any = self.df.index.max()
+
+        if pd.isna(insert_loc):
+            self.df.loc[0] = new_row
+        else:
+            self.df.loc[insert_loc + 1] = new_row
+
+        # Print the message
+        print(f"{self.format_type[f_type]} {message}")
+
+    def save_csv(self) -> None:
+        """
+        Save the current DataFrame (contain all the logs) to a CSV file in self.csv_file_path
+        """
+        self.df.to_csv(self.csv_file_path, mode="w")
+        print(f"Logs saved into {self.csv_file_path}")
 
 def verify_singleton():
     temp: Logs = Logs.getInstance()

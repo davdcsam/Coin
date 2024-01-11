@@ -428,14 +428,12 @@ class Connection(HasTraits):
 
         self.instance_logs.log("Login Flags Passed", "n")
 
-        # Call Main Loop
-
-        # Init
+        # Start Connetion Process
         self.instance_switch_view.switch("loby")
 
         print("Connected to {} Terminal".format(self.terminal_info["name"]))
 
-        # Any
+        # Call Main Loop
         while self.running:
             self._update_data()
 
@@ -452,7 +450,7 @@ class Connection(HasTraits):
 
             time.sleep(self.delay_time)
 
-        # DeInit
+        # Finish Connetion Process
         mt5.shutdown()
 
         # Restore Value
@@ -559,7 +557,7 @@ class Connection(HasTraits):
         self.symbol_info_tick: dict = symbol_info_tick_temp._asdict()
         for k, v in self.symbol_info_tick.items():
             self.__setattr__(f"symbol_info_tick_{k}", v)
-        
+
         """
         ____ ____ ___  ____ ____ ____    _  _ ___  ___  ____ ___ ____
         |  | |__/ |  \ |___ |__/ [__     |  | |__] |  \ |__|  |  |___
