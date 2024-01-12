@@ -107,7 +107,7 @@ class NH0:
 
         switch_view.switch("sign_in")
 
-        logs.notification("Hello, Welcome to {}".format(os.path.basename(os.getcwd())))
+        logs.notification(f"Hello, Welcome to {self.name}")
 
         def start_callback():
             sign_view.load_last_inputs()
