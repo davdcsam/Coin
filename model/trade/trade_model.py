@@ -87,6 +87,16 @@ class TradeModel(Connection):
             )
             return False
 
+        if datetime.utcfromtimestamp(self.symbol_info_tick_time) >= end_time:
+            self.order_check_full_comment += "The broker's current time {} is after the set period {} to {}. The currency can send trades within the time section.\n".format(
+                datetime.utcfromtimestamp(self.symbol_info_tick_time).strftime(
+                    "%H:%M:%S"
+                ),
+                start_time.strftime("%H:%M:%S"),
+                end_time.strftime("%H:%M:%S"),
+            )
+            return False
+
         if (
             formated_inputs["input_stop_loss"] * 0.01
             > formated_inputs["input_deviation_trade"]
@@ -264,7 +274,7 @@ class TradeModel(Connection):
 
             self.instance_logs.log(self.order_result_full_comment, "t")
             self.instance_logs.log(str(self.order_result), "t")
-            self.instance_logs.notification("Bot'll will shutdown.")
+            self.instance_logs.notification("Bot has been shut down.")
             self.deinit_flag = True
             self.bot_status = False
 
