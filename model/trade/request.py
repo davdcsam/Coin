@@ -35,6 +35,7 @@ class RequestModule:
             "type": type_positions,
             "deviation": deviation_trade,
             "magic": 0,
+            "reason": mt5.ORDER_REASON_CLIENT,
             "comment": "",
             "type_time": time_mode,
             "type_filling": filling_mode,
