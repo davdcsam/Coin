@@ -46,7 +46,7 @@ class NH0:
             always_on_top=False,
         )
 
-    def lauch(self):
+    def launch(self):
         loby_window: int | str = dpg.add_window(no_scrollbar=False)
 
         # · Utils · #
@@ -139,4 +139,4 @@ if __name__ == "__main__":
 
     instance_nh0.created_envioment()
 
-    instance_nh0.lauch()
+    instance_nh0.launch()
