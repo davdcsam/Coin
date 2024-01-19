@@ -7,9 +7,9 @@ from traitlets import HasTraits, Any, Unicode
 
 # Owner Modules
 
+from model.trade.request import RequestModule
 from model.trade.section_time import SectionTimeModule
 
-from utils.manager_files import ManagerFiles
 from utils.logs import Logs
 
 
@@ -59,14 +59,35 @@ class CheckerModule(HasTraits):
             self.order_check_full_comment += "The deviation may not be sufficient. If there is too much volatility the order could not be placed.\n"
         return True
 
-    def _postitions(self, formated_inputs: dict) -> bool:
-        for request in self._checker_build_request(
-            formated_inputs["input_lot_size"],
-            self.order_types_dict[formated_inputs["input_order_type"]],
-            formated_inputs["input_take_profit"],
-            formated_inputs["input_stop_loss"],
-            formated_inputs["input_deviation_trade"],
-        ):
+    def _postitions_fill_mode(
+        self,
+        formated_inputs: dict,
+        symbol: str,
+        price_ask: float,
+        price_bid: float,
+        point: Any,
+        time_mode: Any = mt5.ORDER_TIME_GTC,
+    ) -> bool:
+        for filling_mode in [
+            mt5.ORDER_FILLING_FOK,
+            mt5.ORDER_FILLING_IOC,
+            mt5.ORDER_FILLING_RETURN,
+            mt5.ORDER_FILLING_BOC,
+        ]:
+            request = RequestModule.build(
+                symbol,
+                formated_inputs["input_lot_size"],
+                self.order_types_dict[formated_inputs["input_order_type"]],
+                formated_inputs["input_take_profit"],
+                formated_inputs["input_stop_loss"],
+                formated_inputs["input_deviation_trade"],
+                price_ask,
+                price_bid,
+                point,
+                time_mode,
+                filling_mode,
+            )
+
             order_check = mt5.order_check(request)
 
             if not order_check:
@@ -118,49 +139,3 @@ class CheckerModule(HasTraits):
             self.order_check_calc_profit = 0
             self.order_check_calc_loss = 0
             return False
-
-    def _checker_build_request(
-        self,
-        volume: float,
-        type_positions: mt5.ORDER_TYPE_BUY | mt5.ORDER_TYPE_SELL,
-        take_profit: int,
-        stop_loss: int,
-        deviation_trade: int,
-    ):
-        """
-        Prepare a trade request with the necessary parameters
-        """
-        request_list = []
-        for filling_mode in [
-            mt5.ORDER_FILLING_FOK,
-            mt5.ORDER_FILLING_IOC,
-            mt5.ORDER_FILLING_RETURN,
-            mt5.ORDER_FILLING_BOC,
-        ]:
-            trade_request = {
-                "action": mt5.TRADE_ACTION_DEAL,
-                "symbol": self.symbol_info_name,
-                "volume": volume,
-                "type": type_positions,
-                "deviation": deviation_trade,
-                "magic": 0,
-                "comment": "",
-                "type_time": self.symbol_info_order_gtc_mode,
-                "type_filling": filling_mode,
-            }
-            # If the order type is Buy, calculate the price, stop loss, and take profit
-            if type_positions == mt5.ORDER_TYPE_BUY:
-                price = self.symbol_info_ask
-                sl = price - stop_loss * self.symbol_info_point
-                tp = price + take_profit * self.symbol_info_point
-            # If the order type is Sell, calculate the price, stop loss, and take profit
-            elif type_positions == mt5.ORDER_TYPE_SELL:
-                price = self.symbol_info_bid
-                sl = price + stop_loss * self.symbol_info_point
-                tp = price - take_profit * self.symbol_info_point
-            # Update the trade request with the calculated price, stop loss, and take profit
-            trade_request.update({"price": price, "sl": sl, "tp": tp})
-
-            request_list.append(trade_request)
-
-        return request_list

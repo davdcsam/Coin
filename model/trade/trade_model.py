@@ -53,7 +53,14 @@ class TradeModel(Connection, CheckerModule):
             return False
         self.instance_logs.log("Inputs pass checker", "c")
 
-        if not self._postitions(formated_inputs):
+        if not self._postitions_fill_mode(
+            formated_inputs,
+            self.symbol_info_name,
+            self.symbol_info_tick_ask,
+            self.symbol_info_tick_bid,
+            self.symbol_info_point,
+            self.symbol_info_order_gtc_mode,
+        ):
             self.instance_logs.internal_log(
                 f"Inputs didnt pass checker, {self.order_check_full_comment}", "c"
             )
@@ -130,40 +137,6 @@ class TradeModel(Connection, CheckerModule):
             self.instance_logs.notification("Bot has been shut down.")
             self.deinit_flag = True
             self.bot_status = False
-
-    def _operation_build_request(
-        self,
-        volume: float,
-        type_positions: mt5.ORDER_TYPE_BUY | mt5.ORDER_TYPE_SELL,
-        take_profit: int,
-        stop_loss: int,
-        deviation_trade: int,
-    ):
-        trade_request = {
-            "action": mt5.TRADE_ACTION_DEAL,
-            "symbol": self.symbol_info_name,
-            "volume": volume,
-            "type": type_positions,
-            "deviation": deviation_trade,
-            "magic": 0,
-            "comment": "",
-            "type_time": self.symbol_info_order_gtc_mode,
-            "type_filling": self.symbol_info_filling_mode_real,
-        }
-        # If the order type is Buy, calculate the price, stop loss, and take profit
-        if type_positions == mt5.ORDER_TYPE_BUY:
-            price = self.symbol_info_ask
-            sl = price - stop_loss * self.symbol_info_point
-            tp = price + take_profit * self.symbol_info_point
-        # If the order type is Sell, calculate the price, stop loss, and take profit
-        elif type_positions == mt5.ORDER_TYPE_SELL:
-            price = self.symbol_info_bid
-            sl = price + stop_loss * self.symbol_info_point
-            tp = price - take_profit * self.symbol_info_point
-        # Update the trade request with the calculated price, stop loss, and take profit
-        trade_request.update({"price": price, "sl": sl, "tp": tp})
-
-        return trade_request
 
     """
     _  _ ____ ___  _ ____ _ ____ ___     ___  ____ ____ ____ ____ ____ ____ ____ ____
