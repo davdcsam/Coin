@@ -9,6 +9,7 @@ from traitlets import Any, Unicode
 # Owner Modules
 from connection.connection import Connection
 
+from model.trade.request import RequestModule
 from model.trade.checker import CheckerModule
 from model.trade.section_time import SectionTimeModule
 from model.trade.no_position import NoPositionModule
@@ -88,12 +89,18 @@ class TradeModel(Connection, CheckerModule):
 
             # Send the trade request
             self.order_result = mt5.order_send(
-                self._operation_build_request(
+                RequestModule.build(
+                    self.symbol_info_name,
                     self.formated_inputs["input_lot_size"],
                     self.order_types_dict[self.formated_inputs["input_order_type"]],
                     self.formated_inputs["input_take_profit"],
                     self.formated_inputs["input_stop_loss"],
                     self.formated_inputs["input_deviation_trade"],
+                    self.symbol_info_tick_ask,
+                    self.symbol_info_tick_bid,
+                    self.symbol_info_point,
+                    self.symbol_info_order_gtc_mode,
+                    self.symbol_info_filling_mode_real,
                 )
             )._asdict()
 
